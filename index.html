@@ -13,45 +13,45 @@
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #f4f6f9;
-  --surface: #ffffff;
-  --surface2: #f0f2f5;
-  --border: #e4e7ed;
-  --border2: #d0d5de;
-  --text: #1c2333;
-  --text2: #5a6477;
-  --text3: #9aa3b2;
-  --accent: #3b72f0;
-  --accent-light: #eef2fd;
-  --green: #1a9a5c;
-  --green-light: #e6f7ef;
-  --amber: #d97706;
-  --amber-light: #fff8e6;
-  --red: #dc2626;
-  --red-light: #fff0f0;
-  --purple: #7c3aed;
-  --purple-light: #f3effe;
-  --s1: #3b72f0;
-  --s1-light: #eef2fd;
-  --s2: #059669;
+  --bg: linear-gradient(180deg, #9ec5cf 0%, #d5dee2 45%);
+--surface: #ffffff;
+  --surface2: #f8fafc;
+  --border: #e2e8f0;
+  --border2: #cbd5e1;
+  --text: #0f172a;
+  --text2: #334155;
+  --text3: #64748b;
+  --accent: #3b82f6;
+  --accent-light: #eff6ff;
+  --green: #10b981;
+  --green-light: #ecfdf5;
+  --amber: #f59e0b;
+  --amber-light: #fffbeb;
+  --red: #ef4444;
+  --red-light: #fef2f2;
+  --purple: #8b5cf6;
+  --purple-light: #f5f3ff;
+  --s1: #3b82f6;
+  --s1-light: #eff6ff;
+  --s2: #10b981;
   --s2-light: #ecfdf5;
-  --s3: #d97706;
+  --s3: #f59e0b;
   --s3-light: #fffbeb;
-  --s4: #9333ea;
-  --s4-light: #faf5ff;
-  --s5: #0891b2;
+  --s4: #8b5cf6;
+  --s4-light: #f5f3ff;
+  --s5: #06b6d4;
   --s5-light: #ecfeff;
-  --radius: 10px;
-  --radius-lg: 14px;
-  --shadow: 0 1px 4px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
-  --shadow-lg: 0 4px 20px rgba(0,0,0,.10);
+  --radius: 12px;
+  --radius-lg: 16px;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.04);
+  --shadow-lg: 0 10px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.02);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   font-family: 'Sarabun', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   background: var(--bg);
   color: var(--text);
   line-height: 1.65;
@@ -65,7 +65,10 @@ body {
 .sidebar {
   width: 228px;
   flex-shrink: 0;
-  background: var(--surface);
+  background: #e3e5e9;
+    color: #fff;
+    border-right: none;
+    box-shadow: 6px 0 24px rgba(15, 23, 42, 0.18);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -79,14 +82,14 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
-.sidebar-logo .org { font-size: 10.5px; color: var(--text3); line-height: 1.5; margin-bottom: 4px; }
-.sidebar-logo .title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.sidebar-logo .org { font-size: 12px; color: var(--text2); line-height: 1.5; margin-bottom: 4px; }
+.sidebar-logo .title { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.3; }
 .sidebar-logo .badge-year {
   display: inline-block;
   margin-top: 7px;
   background: linear-gradient(135deg, #3b72f0, #6b9ef8);
   color: #fff;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   padding: 3px 10px;
   border-radius: 99px;
@@ -96,11 +99,12 @@ body {
 
 .nav-section {
   padding: .625rem 1rem .2rem;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--text3);
+  color: var(--text2);
+  font-weight: 800;
 }
 
 .nav-item {
@@ -108,7 +112,7 @@ body {
   align-items: center;
   gap: 9px;
   padding: .5rem 1rem;
-  font-size: 13px;
+  font-size: 14px;
   font-family: 'Sarabun', sans-serif;
   color: var(--text2);
   cursor: pointer;
@@ -132,8 +136,9 @@ body {
 .sidebar-footer {
   padding: .75rem 1rem;
   border-top: 1px solid var(--border);
-  font-size: 11px;
-  color: var(--text3);
+  font-size: 12px;
+  color: var(--text2);
+  font-weight: 500;
 }
 
 /* ── Main ── */
@@ -143,7 +148,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(244,246,249,.92);
+  background: #e3e5e9;
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
   padding: .75rem 1.5rem;
@@ -154,8 +159,8 @@ body {
 }
 
 .topbar-left { display: flex; align-items: center; gap: 12px; }
-.topbar-title { font-size: 15px; font-weight: 700; }
-.topbar-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
+.topbar-title { font-size: 17px; font-weight: 700; }
+.topbar-sub { font-size: 13px; color: var(--text2); margin-top: 1px; }
 .topbar-actions { display: flex; gap: 8px; align-items: center; }
 
 /* Quarter selector */
@@ -193,7 +198,7 @@ body {
   justify-content: space-between;
   gap: .5rem;
 }
-.card-title { font-size: 13px; font-weight: 700; }
+.card-title { font-size: 15px; font-weight: 700; }
 .card-body { padding: 1.25rem; }
 
 /* ── Metric grid: 3 rows ── */
@@ -268,8 +273,8 @@ body {
 .metric-card.c-progress .metric-icon { background: var(--accent-light); color: var(--accent); }
 .metric-card.c-pending .metric-icon { background: var(--surface2); color: var(--text3); }
 
-.metric-label { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
-.metric-value { font-size: 24px; font-weight: 700; line-height: 1.1; margin-bottom: 3px; }
+.metric-label { font-size: 12px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+.metric-value { font-size: 26px; font-weight: 700; line-height: 1.1; margin-bottom: 3px; }
 .metric-card.c-blue .metric-value { color: var(--accent); }
 .metric-card.c-green .metric-value { color: var(--green); }
 .metric-card.c-amber .metric-value { color: var(--amber); }
@@ -279,7 +284,7 @@ body {
 .metric-card.c-done .metric-value { color: var(--green); }
 .metric-card.c-progress .metric-value { color: var(--accent); }
 .metric-card.c-pending .metric-value { color: var(--text3); }
-.metric-sub { font-size: 11px; color: var(--text2); line-height: 1.4; }
+.metric-sub { font-size: 13px; color: var(--text2); line-height: 1.4; }
 
 /* Progress bar in metric */
 .metric-progress { margin-top: 8px; }
@@ -325,7 +330,7 @@ body {
 .pipeline-count.done    { color: #1a9a5c; }
 .pipeline-count.progress{ color: #3b72f0; }
 .pipeline-count.pending { color: #9ca3af; }
-.pipeline-label { font-size: 12px; color: var(--text2); margin-top: 3px; font-weight: 500; }
+.pipeline-label { font-size: 14px; color: var(--text2); margin-top: 3px; font-weight: 500; }
 
 /* ── Strategy cards ── */
 .strategy-grid { display: grid; gap: 8px; margin-bottom: 1.25rem; }
@@ -352,8 +357,8 @@ body {
 }
 .strategy-card:hover .strategy-card-name { color: var(--accent); }
 .strategy-card-left {}
-.strategy-card-name { font-size: 13px; font-weight: 700; }
-.strategy-card-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.strategy-card-name { font-size: 15px; font-weight: 700; }
+.strategy-card-sub { font-size: 13px; color: var(--text2); margin-top: 2px; }
 
 .strategy-progress-wrap { margin-top: 8px; }
 .progress-track { height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
@@ -372,7 +377,7 @@ body {
 .badge {
   display: inline-flex; align-items: center; gap: 3px;
   padding: 2px 9px; border-radius: 99px;
-  font-size: 11px; font-weight: 600; white-space: nowrap;
+  font-size: 12px; font-weight: 600; white-space: nowrap;
 }
 .badge-done { background: var(--green-light); color: var(--green); }
 .badge-progress { background: var(--accent-light); color: var(--accent); }
@@ -389,7 +394,7 @@ body {
   padding: 7px 14px;
   border: 1px solid var(--border2);
   border-radius: var(--radius);
-  font-size: 13px; font-family: 'Sarabun', sans-serif; font-weight: 500;
+  font-size: 14px; font-family: 'Sarabun', sans-serif; font-weight: 500;
   cursor: pointer;
   background: var(--surface);
   color: var(--text);
@@ -470,7 +475,7 @@ body {
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th {
   background: var(--surface2); padding: 9px 11px;
-  text-align: left; font-size: 11px; font-weight: 700;
+  text-align: left; font-size: 13px; font-weight: 700;
   color: var(--text2); border-bottom: 1px solid var(--border);
   white-space: nowrap; text-transform: uppercase; letter-spacing: .04em;
 }
@@ -491,7 +496,7 @@ tbody tr.data-row:active td { background: #dce8ff; }
   padding: .75rem 1rem; border-top: 1px solid var(--border);
   justify-content: space-between;
 }
-.pagination-info { font-size: 12px; color: var(--text2); }
+.pagination-info { font-size: 13px; color: var(--text2); }
 .page-btn {
   padding: 4px 9px; border: 1px solid var(--border); border-radius: var(--radius);
   font-size: 12px; font-family: 'Sarabun', sans-serif;
@@ -572,7 +577,7 @@ tbody tr.data-row:active td { background: #dce8ff; }
   display: inline-flex; align-items: center; gap: 3px;
   background: var(--accent-light); color: var(--accent);
   padding: 1px 7px; border-radius: 99px;
-  font-size: 11px; font-weight: 600; white-space: nowrap;
+  font-size: 12px; font-weight: 600; white-space: nowrap;
 }
 .com-placeholder { color: var(--text3); font-size: 13px; }
 
@@ -644,7 +649,7 @@ code { font-family: monospace; font-size: 11px; background: var(--surface2); pad
   position: fixed; bottom: 1.5rem; right: 1.5rem;
   background: #1c2333; color: #fff;
   padding: 9px 16px; border-radius: var(--radius);
-  font-size: 12px; z-index: 999;
+  font-size: 13px; z-index: 999;
   opacity: 0; transform: translateY(8px);
   transition: opacity .25s, transform .25s;
   pointer-events: none;
@@ -1009,7 +1014,7 @@ code { font-family: monospace; font-size: 11px; background: var(--surface2); pad
 .timeline-wrap { overflow-x:auto; }
 .timeline-table { width:100%; border-collapse:collapse; }
 .timeline-table th { 
-  font-size:11px;font-weight:700;color:var(--text2);
+  font-size:13px;font-weight:700;color:var(--text2);
   padding:8px 10px; background:var(--surface2);
   border-bottom:2px solid var(--border); text-align:left;
 }
@@ -1079,7 +1084,7 @@ body.year-2570 #page-dashboard::before {
 .gantt-table { border-collapse: collapse; font-size: 12px; min-width: 1100px; }
 .gantt-table th {
   background: var(--surface2); padding: 7px 10px;
-  font-size: 10px; font-weight: 700; color: var(--text2);
+  font-size: 12px; font-weight: 700; color: var(--text2);
   border-bottom: 2px solid var(--border);
   text-align: center; white-space: nowrap;
   letter-spacing: .04em; text-transform: uppercase;
@@ -1261,10 +1266,10 @@ body.year-2570 #page-dashboard::before {
 .user-menu.open { display: block; }
 .user-menu-header { padding: 10px 14px; border-bottom: 1px solid var(--border); }
 .user-menu-name  { font-size: 14px; font-weight: 700; }
-.user-menu-email { font-size: 12px; color: var(--text3); margin-top: 1px; }
+.user-menu-email { font-size: 13px; color: var(--text3); margin-top: 1px; }
 .user-menu-item {
   display: flex; align-items: center; gap: 8px;
-  padding: 9px 14px; font-size: 13px; cursor: pointer;
+  padding: 9px 14px; font-size: 14px; cursor: pointer;
   transition: background .12s; color: var(--text);
   border: none; background: none; width: 100%; text-align: left;
   font-family: 'Sarabun', sans-serif;
@@ -1868,10 +1873,6 @@ body.year-2570 #page-dashboard::before {
         </div>
       </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /layout -->
-
       <!-- ===== GANTT CHART ===== -->
       <div id="page-gantt" style="display:none">
         <div class="card" style="margin-bottom:1rem">
@@ -1957,6 +1958,10 @@ body.year-2570 #page-dashboard::before {
           </div>
         </div>
       </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
 
 
 <!-- MODAL: Add/Edit -->
@@ -6116,14 +6121,18 @@ async function authLogin() {
       return;
     } catch(err) {
       const m = err.code;
-      let msg = '❌ เกิดข้อผิดพลาด';
-      if (m==='auth/user-not-found'||m==='auth/invalid-credential') msg = '❌ Email หรือรหัสผ่านไม่ถูกต้อง';
-      else if (m==='auth/wrong-password')    msg = '❌ รหัสผ่านไม่ถูกต้อง';
-      else if (m==='auth/invalid-email')     msg = '❌ รูปแบบอีเมลไม่ถูกต้อง';
-      else if (m==='auth/too-many-requests') msg = '❌ ลองใหม่อีกครั้งในภายหลัง';
-      // ถ้า network error → fallback GAS/local
-      if (!m || m === 'auth/network-request-failed') { /* fallthrough */ }
-      else { errEl.textContent = msg; errEl.classList.add('show'); btn.disabled = false; btn.textContent = 'เข้าสู่ระบบ'; return; }
+      // กรณี email ผิดรูปแบบ หรือ too-many-requests → หยุดทันที ไม่ต้อง fallback
+      if (m === 'auth/invalid-email') {
+        errEl.textContent = '❌ รูปแบบอีเมลไม่ถูกต้อง';
+        errEl.classList.add('show'); btn.disabled = false; btn.textContent = 'เข้าสู่ระบบ'; return;
+      }
+      if (m === 'auth/too-many-requests') {
+        errEl.textContent = '❌ ลองใหม่อีกครั้งในภายหลัง (too many requests)';
+        errEl.classList.add('show'); btn.disabled = false; btn.textContent = 'เข้าสู่ระบบ'; return;
+      }
+      // กรณีอื่น (user-not-found, wrong-password, invalid-credential, network-error, ฯลฯ)
+      // → fallthrough ไปลอง GAS และ local cache ต่อ
+      // (user ที่สมัครผ่าน local fallback จะ login ได้จาก local cache)
     }
   }
 
@@ -6339,30 +6348,39 @@ document.addEventListener('click', e => {
 
   // รอให้ Firebase resolve auth state ก่อน (ป้องกัน race condition)
   // unsubscribe หลังได้ค่าแรก เพื่อไม่ให้ยิงซ้ำ
-  let _authResolved = false;
-  const _unsubscribe = firebase.auth().onAuthStateChanged(async function(user) {
-    if (_authResolved) return;
-    _authResolved = true;
+  // ใช้ flag ป้องกัน race condition ระหว่าง initial auth check กับ login/logout action
+  let _fbInitDone = false;
 
+  firebase.auth().onAuthStateChanged(async function(user) {
     if (user) {
-      // Firebase มี session อยู่ → อัปเดต _currentUser
+      // Firebase มี session → อัปเดต _currentUser เสมอ (ทั้ง initial load และหลัง login)
       let fullname = user.displayName || user.email;
       try {
         const doc = await firebase.firestore().collection('members').doc(user.uid).get();
         if (doc.exists) fullname = doc.data().fullname || user.email;
       } catch(e) {}
-      _setLoggedIn({ id: user.uid, name: fullname, email: user.email, uid: user.uid, isGuest: false });
+      // อัปเดต session ถ้า Firebase user ใหม่กว่า หรือยังไม่มี session
+      if (!_currentUser || _currentUser.uid === user.uid || !_currentUser.uid) {
+        _setLoggedIn({ id: user.uid, name: fullname, email: user.email, uid: user.uid, isGuest: false });
+      }
     } else {
-      // Firebase ยืนยันว่าไม่มี session
-      // ถ้า _currentUser เป็น guest → ไม่ต้องทำอะไร (guest ไม่ใช้ Firebase)
-      if (_currentUser && _currentUser.isGuest) return;
-      // ถ้าไม่มี session เลย → เปิด login modal
-      _currentUser = null;
-      _saveSession(null);
-      if (typeof _applyAuthUI === 'function') _applyAuthUI();
-      setTimeout(() => {
-        if (!_currentUser && typeof openAuthModal === 'function') openAuthModal('login');
-      }, 300);
+      // Firebase ยืนยันว่าไม่มี session (user = null)
+      if (!_fbInitDone) {
+        // Initial load เท่านั้น: ตรวจสอบว่าควรเปิด modal หรือไม่
+        _fbInitDone = true;
+        // ถ้า local session เป็น guest → ไม่ต้องทำอะไร
+        if (_currentUser && _currentUser.isGuest) return;
+        // ถ้า local session มาจาก local cache (ไม่มี Firebase uid) → เก็บไว้ ไม่ล้าง
+        if (_currentUser && !_currentUser.uid) return;
+        // ถ้าไม่มี session เลย → เปิด login modal
+        if (!_currentUser) {
+          setTimeout(() => {
+            if (!_currentUser && typeof openAuthModal === 'function') openAuthModal('login');
+          }, 300);
+        }
+      }
+      // หลัง _fbInitDone: Firebase null หมายความว่า logout จริง (เช่น กด logout)
+      // → ไม่ต้องทำอะไร เพราะ authLogout() จัดการแล้ว
     }
   });
 })();
