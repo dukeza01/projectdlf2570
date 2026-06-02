@@ -5275,12 +5275,20 @@ window._pendingSaveTs = 0;
   }
 
   // ── Sync จาก Sheet (ทำหลัง render เพื่อไม่บล็อก UI) ──
-  function syncFromSheet(showToast_, safe){
-    if(!GAS_ENABLED || !_gasUrl || _gasUrl.includes('YOUR_GAS')) return Promise.resolve();
-    const st = document.getElementById('gsStatus');
-    return fetch(`${_gasUrl}?action=getAll`, { redirect:'follow' })
-      .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-      .then(res=>{
+  function syncFromSheet() {
+  _showLoading('กำลังซิงค์ข้อมูลจาก Google Sheet...');
+  
+  // เปลี่ยนมาใช้ gasJsonp เพื่อดึงข้อมูลข้ามไซต์บน GitHub Pages
+  return gasJsonp({ action: 'getAll' })
+    .then(res => {
+      if (!res || !res.success) throw new Error(res ? res.message : 'GAS error');
+      
+      const list = res.data || [];
+      _projects = list.map(item => _parseProjectFromSheet(item));
+      saveToLocal();
+      return _projects;
+    });
+}
         if(!res.success) throw new Error(res.message||'GAS error');
         if(safe && Date.now() - window._pendingSaveTs < 30000){
           console.log('syncFromSheet: skipped — recent save within 30s');
