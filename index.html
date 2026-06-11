@@ -645,6 +645,7 @@ tbody tr.data-row:active td { background: #dce8ff; }
 .status-ok { background: var(--green-light); color: var(--green); }
 .status-err { background: var(--red-light); color: var(--red); }
 .status-info { background: var(--accent-light); color: var(--accent); }
+.status-warn { background: var(--amber-light); color: var(--amber); }
 code { font-family: monospace; font-size: 11px; background: var(--surface2); padding: 1px 5px; border-radius: 4px; color: var(--text); }
 
 /* Summary table */
@@ -1699,7 +1700,7 @@ body.year-2570 #page-dashboard::before {
             <code>https://script.google.com/macros/s/<strong>[DEPLOYMENT_ID]</strong>/exec</code>
           </div>
           <div class="gs-row">
-            <input type="text" id="gasUrlInput" class="form-input" placeholder="https://script.google.com/macros/s/AKfycbzPIWgcIQeBkI0gr5uPIjS-IcZ2w-kWrAb5nkggPoYImMR6DJMovuycyhkXUag8SGBi/exec" style="max-width:520px">
+            <input type="text" id="gasUrlInput" class="form-input" placeholder="https://script.google.com/macros/s/AKfycbzGjQa5BEEeOJSmm-mhlNli5XKQRbSu5dC83X2lxZb_QIspKZ2LLN8fw1xGIVnw-oWm/exec" style="max-width:520px">
             <button class="btn btn-primary btn-sm" onclick="applyGasUrl()">✔ ตั้งค่า URL</button>
           </div>
           <div id="gasUrlStatus" style="margin-top:8px;font-size:12px;color:var(--text3)">สถานะ: ยังไม่ได้ตั้งค่า GAS URL</div>
@@ -4161,7 +4162,7 @@ function renderCommitteeChart(fp) {
 
 // ===== GOOGLE SHEETS =====
 // *** URL ตายตัว — ดึงข้อมูลจาก Sheet นี้เท่านั้น ***
-const GAS_URL_2570 = 'https://script.google.com/macros/s/AKfycbzPIWgcIQeBkI0gr5uPIjS-IcZ2w-kWrAb5nkggPoYImMR6DJMovuycyhkXUag8SGBi/exec';
+const GAS_URL_2570 = 'https://script.google.com/macros/s/AKfycbzGjQa5BEEeOJSmm-mhlNli5XKQRbSu5dC83X2lxZb_QIspKZ2LLN8fw1xGIVnw-oWm/exec';
 let _gasUrl = GAS_URL_2570;
 let GAS_ENABLED = true;
 
@@ -4201,12 +4202,59 @@ function gasJsonp(params){
 // ── gasPost: ส่งข้อมูลขึ้น GAS ด้วย JSONP (รับ response จริง ไม่มีปัญหา CORS) ──────
 // เข้ารหัส payload เป็น base64 เพื่อหลีกเลี่ยง URL limit และอักขระพิเศษ
 function gasPost(action, payload){
+  // หากข้อมูลมีขนาดใหญ่เกินไป (เช่น มีรูปภาพเยอะหรือตารางยาว) การใช้ JSONP (GET) อาจล้มเหลวเนื่องจาก URL ยาวเกินไป
+  // เราจะพยายามใช้ fetch POST ก่อน ถ้าติด CORS ค่อย fallback ไป JSONP ที่ปลอดภัยขึ้น
+  const bodyData = JSON.stringify({ action, ...payload });
+  
+  // ตรวจสอบขนาดข้อมูลเบื้องต้น (ถ้าเกิน 4KB แนะนำให้ใช้ POST)
+  const isLargeData = bodyData.length > 4000;
+
   return new Promise((resolve, reject) => {
+    // พยายามส่งด้วย fetch POST (ต้องตั้งค่า GAS ให้รองรับ OPTIONS/CORS หรือใช้ mode: 'no-cors')
+    // แต่ GAS Web App ไม่รองรับ CORS แบบเต็มรูปแบบสำหรับ POST จาก domain อื่น
+    // ดังนั้นเราจะใช้ฟอร์มซ่อน (Hidden Form) เพื่อส่ง POST ข้าม domain โดยไม่ติด CORS
+    
+    if (isLargeData) {
+      console.log('Large data detected, using form submission fallback');
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = _gasUrl;
+      form.target = 'gas-post-iframe';
+      form.style.display = 'none';
+
+      const input = document.createElement('input');
+      input.name = 'payload';
+      input.value = bodyData;
+      form.appendChild(input);
+
+      let iframe = document.getElementById('gas-post-iframe');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'gas-post-iframe';
+        iframe.name = 'gas-post-iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+      
+      // เนื่องจากส่งผ่าน iframe เราจะไม่ได้รับ response กลับมาตรงๆ 
+      // จึงขอสมมติว่าสำเร็จหลังจากผ่านไป 3 วินาที (หรือผู้ใช้สามารถตรวจสอบผ่านการ sync ภายหลัง)
+      setTimeout(() => {
+        if (form.parentNode) form.remove();
+        // ลองยิง sync เงียบๆ เพื่อเช็คว่าข้อมูลเข้าจริงไหม
+        if (typeof _syncFromSheetSilent === 'function') _syncFromSheetSilent();
+        resolve({ success: true, method: 'form-post' });
+      }, 4000);
+      return;
+    }
+
+    // สำหรับข้อมูลขนาดเล็ก ใช้ JSONP ตามเดิมแต่ปรับปรุงการเข้ารหัส
     const cbName = '_gasCb_' + Date.now() + '_' + Math.floor(Math.random()*10000);
     const timeout = setTimeout(() => {
       delete window[cbName];
       if (script && script.parentNode) script.remove();
-      // fallback: ถือว่าสำเร็จเพื่อไม่ให้ block UI (GAS อาจ timeout แต่บันทึกได้)
       resolve({ success: true, _timeout: true });
     }, 30000);
 
@@ -4217,10 +4265,13 @@ function gasPost(action, payload){
       resolve(data);
     };
 
-    // encode payload เป็น base64 เพื่อรองรับ JSON ขนาดใหญ่และ UTF-8
     let payloadStr;
-    try { payloadStr = btoa(unescape(encodeURIComponent(JSON.stringify({ action, ...payload })))); }
-    catch(e) { payloadStr = encodeURIComponent(JSON.stringify({ action, ...payload })); }
+    try { 
+      // ใช้การเข้ารหัสที่ปลอดภัยสำหรับภาษาไทย
+      payloadStr = btoa(encodeURIComponent(bodyData).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1))); 
+    } catch(e) { 
+      payloadStr = encodeURIComponent(bodyData); 
+    }
 
     const p = new URLSearchParams({ action, payload: payloadStr, callback: cbName });
     const script = document.createElement('script');
@@ -4228,7 +4279,7 @@ function gasPost(action, payload){
     script.onerror = () => {
       clearTimeout(timeout);
       delete window[cbName];
-      if (script.parentNode) script.remove();
+      if (script && script.parentNode) script.remove();
       reject(new Error('Network error — ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต'));
     };
     document.head.appendChild(script);
