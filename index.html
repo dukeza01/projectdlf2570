@@ -1700,7 +1700,7 @@ body.year-2570 #page-dashboard::before {
             <code>https://script.google.com/macros/s/<strong>[DEPLOYMENT_ID]</strong>/exec</code>
           </div>
           <div class="gs-row">
-            <input type="text" id="gasUrlInput" class="form-input" placeholder="https://script.google.com/macros/s/AKfycbzGjQa5BEEeOJSmm-mhlNli5XKQRbSu5dC83X2lxZb_QIspKZ2LLN8fw1xGIVnw-oWm/exec" style="max-width:520px">
+            <input type="text" id="gasUrlInput" class="form-input" placeholder="https://script.google.com/macros/s/AKfycbzxo_Tcy-dGrJjF6fEiRYvcn9uF48fIoern1lTcMcyzg6aL5Z2UoStgShj10Y56p5FE/exec" style="max-width:520px">
             <button class="btn btn-primary btn-sm" onclick="applyGasUrl()">✔ ตั้งค่า URL</button>
           </div>
           <div id="gasUrlStatus" style="margin-top:8px;font-size:12px;color:var(--text3)">สถานะ: ยังไม่ได้ตั้งค่า GAS URL</div>
@@ -3322,6 +3322,13 @@ function saveProject(){
     return;
   }
 
+  // รอไฟล์เอกสารแนบที่กำลังอัปโหลดขึ้น Drive ให้เสร็จก่อน
+  const stillUploadingDocs = docFiles.filter(f=>f._uploading);
+  if(stillUploadingDocs.length){
+    showToast(`⏳ รอไฟล์เอกสาร ${stillUploadingDocs.length} ไฟล์อัปโหลดขึ้น Drive ให้เสร็จก่อนครับ`, 3000);
+    return;
+  }
+
   // ส่งเฉพาะ field ที่จำเป็น ไม่ส่ง _dataUrl/_uploading/_driveError ขึ้น Sheet
   const cleanImages = tempImages.map(img=>({
     name:     img.name     || '',
@@ -3379,7 +3386,7 @@ function saveProject(){
     solutions:       '',
     kpi:             kpiFromEval,
     committees:      getComCheckboxes(),
-    docFiles:        docFiles.map(f=>({name:f.name,size:f.size,type:f.type,url:f.url||''})),
+    docFiles:        docFiles.map(f=>({name:f.name,size:f.size,type:f.type,url:f.url||'',fileId:f.fileId||''})),
     images:          cleanImages
   };
   const imgCount = cleanImages.length;
@@ -3602,6 +3609,33 @@ function openDetail(id){
         ${p.images.map((img,i)=>`<div class="detail-img-item" onclick="openDetailImgLightbox(${p.id},${i})">
           <img src="${driveImgUrl(img)}" alt="${escapeHtml(img.name||'รูปภาพ')}" onerror="onImgError(this)">
         </div>`).join('')}
+      </div>
+    </div>`:''}
+    ${(p.docFiles&&p.docFiles.length)?`
+    <div class="detail-section">
+      <div class="detail-section-title">📎 เอกสารแนบ (${p.docFiles.length} ไฟล์)</div>
+      <div>
+        ${p.docFiles.map(f=>{
+          const icons = {pdf:'📄',doc:'📝',docx:'📝',xls:'📊',xlsx:'📊',ppt:'📋',pptx:'📋',jpg:'🖼️',jpeg:'🖼️',png:'🖼️',gif:'🖼️',webp:'🖼️'};
+          const ext = (f.name||'').split('.').pop().toLowerCase();
+          const ico = icons[ext]||'📎';
+          const sz = f.size > 1024*1024 ? (f.size/1024/1024).toFixed(1)+' MB' : Math.round((f.size||0)/1024)+' KB';
+          return f.url
+            ? `<a href="${f.url}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:5px;background:var(--surface2);text-decoration:none;color:inherit">
+                <span style="font-size:18px">${ico}</span>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(f.name)}</div>
+                  <div style="font-size:10.5px;color:var(--text3)">${sz} · เปิดใน Drive</div>
+                </div>
+              </a>`
+            : `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:5px;background:var(--surface2)">
+                <span style="font-size:18px">${ico}</span>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(f.name)}</div>
+                  <div style="font-size:10.5px;color:var(--text3)">${sz}</div>
+                </div>
+              </div>`;
+        }).join('')}
       </div>
     </div>`:''}
   `;
@@ -4162,7 +4196,7 @@ function renderCommitteeChart(fp) {
 
 // ===== GOOGLE SHEETS =====
 // *** URL ตายตัว — ดึงข้อมูลจาก Sheet นี้เท่านั้น ***
-const GAS_URL_2570 = 'https://script.google.com/macros/s/AKfycbzGjQa5BEEeOJSmm-mhlNli5XKQRbSu5dC83X2lxZb_QIspKZ2LLN8fw1xGIVnw-oWm/exec';
+const GAS_URL_2570 = 'https://script.google.com/macros/s/AKfycbzxo_Tcy-dGrJjF6fEiRYvcn9uF48fIoern1lTcMcyzg6aL5Z2UoStgShj10Y56p5FE/exec';
 let _gasUrl = GAS_URL_2570;
 let GAS_ENABLED = true;
 
@@ -4284,6 +4318,43 @@ function gasPost(action, payload){
     };
     document.head.appendChild(script);
   });
+}
+
+// ── gasFetchPost: ส่งข้อมูลไป GAS ด้วย fetch POST + รับ JSON ตอบกลับจริง ──────
+// ใช้สำหรับงานที่ต้องรอผลลัพธ์ทันที เช่น อัปโหลด/ลบไฟล์เอกสารแนบบน Drive
+// Content-Type: text/plain เพื่อหลีกเลี่ยง CORS preflight (OPTIONS) ที่ GAS ไม่รองรับ
+function gasFetchPost(action, data){
+  return fetch(_gasUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action, data })
+  }).then(res => {
+    if(!res.ok) throw new Error('GAS HTTP ' + res.status);
+    return res.json();
+  });
+}
+
+// ── fileToBase64: แปลงไฟล์เป็น base64 (ไม่รวม data: prefix) ──────
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+    reader.onerror = () => reject(new Error('อ่านไฟล์ไม่สำเร็จ'));
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── uploadDocFileToGas: อัปโหลดไฟล์เอกสารแนบ (PDF/Word/Excel ฯลฯ) ──────
+// ขึ้น Google Drive folder ที่กำหนดไว้ใน GAS (DOC_FOLDER_ID) ผ่าน action 'uploadDocFile'
+async function uploadDocFileToGas(file){
+  const base64Data = await fileToBase64(file);
+  const res = await gasFetchPost('uploadDocFile', {
+    fileName: file.name,
+    mimeType: file.type || 'application/octet-stream',
+    base64Data
+  });
+  if(!res || !res.success) throw new Error((res && res.message) || 'Upload failed');
+  return res;
 }
 
 // ── cloudinaryUpload: อัปโหลดตรงจาก browser → Cloudinary ──────
@@ -5057,9 +5128,45 @@ function processDocFiles(files) {
   files.forEach(f => {
     if(docFiles.length>=10){ showToast('⚠️ สูงสุด 10 ไฟล์',2000); return; }
     if(f.size>20*1024*1024){ showToast('⚠️ ไฟล์ '+f.name+' ใหญ่เกิน 20MB',2500); return; }
-    docFiles.push({name:f.name, size:f.size, type:f.type, _file:f, status:'ready'});
+
+    // สร้าง placeholder ก่อนเพื่อแสดงสถานะ "กำลังอัปโหลด"
+    const placeholder = { name:f.name, size:f.size, type:f.type, url:'', fileId:'', _uploading:true, status:'uploading' };
+    docFiles.push(placeholder);
+    renderDocFileList();
+
+    if(!GAS_ENABLED){
+      placeholder._uploading = false;
+      placeholder.status = 'ready';
+      renderDocFileList();
+      return;
+    }
+
+    function doUpload(attempt){
+      uploadDocFileToGas(f)
+        .then(res => {
+          placeholder.url      = res.url || '';
+          placeholder.fileId   = res.fileId || '';
+          placeholder._uploading = false;
+          placeholder.status   = 'saved';
+          renderDocFileList();
+          showToast(`✅ "${f.name}" อัปโหลดขึ้น Drive สำเร็จ${attempt>1?' (retry)':''}`, 2200);
+        })
+        .catch(err => {
+          console.error(`DocFile upload attempt ${attempt} failed:`, err.message);
+          if(attempt < 3){
+            showToast(`⏳ retry ${attempt}/2 — "${f.name}"`, 1500);
+            setTimeout(()=>doUpload(attempt+1), 2000);
+          } else {
+            placeholder._uploading = false;
+            placeholder._uploadError = true;
+            placeholder.status = 'error';
+            renderDocFileList();
+            showToast(`⚠️ อัปโหลด "${f.name}" ไม่สำเร็จ: ${err.message}`, 4000);
+          }
+        });
+    }
+    doUpload(1);
   });
-  renderDocFileList();
 }
 function renderDocFileList() {
   const el=document.getElementById('docFileList'); if(!el) return;
@@ -5068,18 +5175,36 @@ function renderDocFileList() {
     const ext = f.name.split('.').pop().toLowerCase();
     const ico = icons[ext]||'📎';
     const sz = f.size > 1024*1024 ? (f.size/1024/1024).toFixed(1)+' MB' : Math.round(f.size/1024)+' KB';
+    let statusHtml;
+    if(f._uploading){
+      statusHtml = `<div style="font-size:10.5px;color:var(--accent)">⏳ กำลังอัปโหลดขึ้น Drive...</div>`;
+    } else if(f._uploadError){
+      statusHtml = `<div style="font-size:10.5px;color:#ef4444">⚠️ อัปโหลดไม่สำเร็จ — ลบแล้วลองใหม่</div>`;
+    } else if(f.url){
+      statusHtml = `<a href="${f.url}" target="_blank" rel="noopener" style="font-size:10.5px;color:var(--accent);text-decoration:underline">📎 เปิดไฟล์ใน Drive · ${sz}</a>`;
+    } else {
+      statusHtml = `<div style="font-size:10.5px;color:var(--text3)">${sz}</div>`;
+    }
     return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:5px;background:var(--surface2)">
       <span style="font-size:18px">${ico}</span>
       <div style="flex:1;min-width:0">
         <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.name}</div>
-        <div style="font-size:10.5px;color:var(--text3)">${sz}</div>
+        ${statusHtml}
       </div>
       <button type="button" onclick="removeDocFile(${i})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px;width:24px;height:24px;flex-shrink:0">×</button>
     </div>`;
   }).join('') : '';
-  const fd=document.getElementById('fDocFiles'); if(fd) fd.value=JSON.stringify(docFiles.map(f=>({name:f.name,size:f.size,type:f.type})));
+  const fd=document.getElementById('fDocFiles'); if(fd) fd.value=JSON.stringify(docFiles.map(f=>({name:f.name,size:f.size,type:f.type,url:f.url||'',fileId:f.fileId||''})));
 }
-function removeDocFile(i) { docFiles.splice(i,1); renderDocFileList(); }
+function removeDocFile(i) {
+  const f = docFiles[i];
+  // ลบไฟล์ออกจาก Drive ด้วย (best-effort, ไม่บล็อก UI)
+  if(f && f.fileId && GAS_ENABLED){
+    gasFetchPost('deleteDriveFile', { fileId: f.fileId }).catch(()=>{});
+  }
+  docFiles.splice(i, 1);
+  renderDocFileList();
+}
 
 
 function _setQuarterCheckboxes(val) {
