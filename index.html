@@ -148,7 +148,7 @@ background-attachment: fixed;
 }
 
 /* ── Main ── */
-.main { margin-left: 228px; flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
+.main { margin-left: 228px; flex: 1; min-height: 100vh; display: flex; flex-direction: column; min-width: 0; overflow-x: auto; }
 
 .topbar {
   position: sticky;
@@ -187,7 +187,7 @@ background-attachment: fixed;
 }
 .quarter-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,114,240,.12); }
 
-.content { padding: 1.5rem; flex: 1; }
+.content { padding: 1.5rem; flex: 1; overflow-x: auto; min-width: 0; }
 
 /* ── Cards ── */
 .card {
@@ -1087,7 +1087,7 @@ body.year-2570 #page-dashboard::before {
 
 
 /* ── Gantt Chart ── */
-.gantt-wrap { overflow-x: auto; padding-bottom: 1rem; }
+.gantt-wrap { overflow-x: auto; padding-bottom: 1rem; -webkit-overflow-scrolling: touch; }
 .gantt-table { border-collapse: collapse; font-size: 12px; min-width: 1100px; }
 .gantt-table th {
   background: var(--surface2); padding: 7px 10px;
@@ -1290,6 +1290,128 @@ body.year-2570 #page-dashboard::before {
   border-radius: 99px; padding: 4px 12px;
   font-size: 12px; font-weight: 700;
 }
+
+/* ── Risk Add Modal ── */
+.risk-modal-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.45);
+  z-index:1000; align-items:center; justify-content:center;
+}
+.risk-modal-overlay.open { display:flex; }
+.risk-modal {
+  background:var(--surface); border-radius:var(--radius-lg); padding:1.75rem;
+  width:460px; max-width:95vw; box-shadow:var(--shadow-lg); position:relative;
+}
+.risk-modal-title { font-size:16px; font-weight:700; margin-bottom:1.25rem; }
+.risk-modal-footer { display:flex; justify-content:flex-end; gap:8px; margin-top:1.25rem; }
+
+/* ── Bottom action bar ── */
+.risk-action-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:.875rem 1.25rem; border-top:1px solid var(--border);
+  background:linear-gradient(to right, #f8f9ff, #ffffff);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  flex-wrap:wrap; gap:10px;
+}
+
+/* ── Record chips ── */
+.risk-chip {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:4px 10px; border-radius:99px; font-size:12px; font-weight:500;
+  border:1.5px solid var(--border2); background:var(--surface);
+  color:var(--text); cursor:pointer; transition:.15s; white-space:nowrap;
+  max-width:200px; overflow:hidden; text-overflow:ellipsis;
+}
+.risk-chip:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
+.risk-chip.active { border-color:var(--accent); background:var(--accent); color:#fff; }
+.risk-chip-del { color:inherit; opacity:.6; font-size:13px; padding:0 2px; background:none; border:none; cursor:pointer; }
+.risk-chip-del:hover { opacity:1; color:#dc2626; }
+
+/* ── Risk Management Page ── */
+.risk-tabs { display:flex; gap:4px; margin-bottom:1.25rem; flex-wrap:wrap; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px; }
+.risk-tab {
+  padding:.45rem 1rem; border-radius:99px; font-size:12.5px; font-weight:600;
+  border:1.5px solid var(--border2); background:var(--surface); color:var(--text2);
+  cursor:pointer; transition:.15s;
+}
+.risk-tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.risk-tab:hover:not(.active) { background:var(--surface2); color:var(--text); }
+
+.risk-panel { display:none; }
+.risk-panel.active { display:block; }
+
+.risk-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px 20px; }
+.risk-form-grid .full { grid-column:1/-1; }
+
+.risk-table { width:100%; border-collapse:collapse; font-size:13px; }
+.risk-table th {
+  background:var(--surface2); padding:.5rem .75rem;
+  border:1px solid var(--border2); text-align:left; font-weight:600; font-size:12px;
+}
+.risk-table td {
+  padding:.4rem .6rem; border:1px solid var(--border); vertical-align:top;
+}
+.risk-table tr:hover td { background:#f8f9ff; }
+
+.risk-input { width:100%; padding:.4rem .6rem; border:1px solid var(--border2);
+  border-radius:6px; font-size:13px; font-family:'Sarabun',sans-serif;
+  background:var(--surface); color:var(--text); transition:.15s; }
+.risk-input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,114,240,.1); }
+
+.risk-select { width:100%; padding:.4rem .6rem; border:1px solid var(--border2);
+  border-radius:6px; font-size:13px; font-family:'Sarabun',sans-serif;
+  background:var(--surface); color:var(--text); cursor:pointer; }
+
+.risk-textarea { width:100%; padding:.5rem .75rem; border:1px solid var(--border2);
+  border-radius:6px; font-size:13px; font-family:'Sarabun',sans-serif;
+  background:var(--surface); color:var(--text); resize:vertical; min-height:64px; }
+.risk-textarea:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,114,240,.1); }
+
+.risk-score-badge {
+  display:inline-block; padding:2px 10px; border-radius:99px;
+  font-size:11.5px; font-weight:700; white-space:nowrap;
+}
+.risk-very-high { background:#fee2e2; color:#dc2626; }
+.risk-high { background:#fef3c7; color:#d97706; }
+.risk-medium { background:#d1fae5; color:#059669; }
+.risk-low { background:#dbeafe; color:#2563eb; }
+
+.risk-rating-row { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.risk-rating-btn {
+  width:36px; height:32px; border-radius:6px; border:1.5px solid var(--border2);
+  background:var(--surface); color:var(--text2); font-size:13px; font-weight:600;
+  cursor:pointer; transition:.12s; display:flex; align-items:center; justify-content:center;
+}
+.risk-rating-btn:hover { border-color:var(--accent); color:var(--accent); }
+.risk-rating-btn.sel-1,.risk-rating-btn.sel-2 { background:#d1fae5; border-color:#059669; color:#059669; }
+.risk-rating-btn.sel-3 { background:#fef3c7; border-color:#d97706; color:#d97706; }
+.risk-rating-btn.sel-4,.risk-rating-btn.sel-5 { background:#fee2e2; border-color:#dc2626; color:#dc2626; }
+
+.add-row-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:.4rem .9rem; border-radius:6px; font-size:12.5px; font-weight:600;
+  border:1.5px dashed var(--accent); color:var(--accent); background:var(--accent-light);
+  cursor:pointer; transition:.15s; margin-top:.5rem;
+}
+.add-row-btn:hover { background:#dce8ff; }
+
+.del-row-btn {
+  width:26px; height:26px; border-radius:50%; border:none;
+  background:#fee2e2; color:#dc2626; cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.del-row-btn:hover { background:#fca5a5; }
+
+.risk-matrix-wrap { overflow-x:auto; }
+.risk-matrix { border-collapse:collapse; font-size:12px; text-align:center; min-width:380px; }
+.risk-matrix th,.risk-matrix td { border:1px solid var(--border2); padding:.35rem .5rem; }
+.risk-matrix .rm-head { background:var(--surface2); font-weight:700; }
+.rm-1-2,.rm-1-3,.rm-2-1,.rm-3-1 { background:#dbeafe; color:#1e40af; }
+.rm-2-2,.rm-2-3,.rm-3-2,.rm-1-4,.rm-4-1 { background:#d1fae5; color:#065f46; }
+.rm-3-3,.rm-2-4,.rm-4-2,.rm-1-5,.rm-5-1 { background:#fef3c7; color:#92400e; }
+.rm-3-4,.rm-4-3,.rm-2-5,.rm-5-2,.rm-4-4 { background:#fed7aa; color:#c2410c; }
+.rm-4-5,.rm-5-4,.rm-5-5,.rm-3-5,.rm-5-3 { background:#fee2e2; color:#991b1b; }
+.risk-matrix .impact-label { writing-mode:vertical-rl; transform:rotate(180deg); font-weight:700; font-size:11px; white-space:nowrap; }
+
 </style>
 </head>
 <body>
@@ -1347,6 +1469,11 @@ body.year-2570 #page-dashboard::before {
       <button class="nav-item" onclick="showPage('gsheet')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         Google Sheets
+      </button>
+      <div class="nav-section">ความเสี่ยง</div>
+      <button class="nav-item" onclick="showPage('risk',undefined,this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        บริหารความเสี่ยง
       </button>
     </div>
     <div class="sidebar-footer" id="sidebar-footer">ปีงบประมาณ 2570</div>
@@ -1700,7 +1827,7 @@ body.year-2570 #page-dashboard::before {
             <code>https://script.google.com/macros/s/<strong>[DEPLOYMENT_ID]</strong>/exec</code>
           </div>
           <div class="gs-row">
-            <input type="text" id="gasUrlInput" class="form-input" placeholder="https://script.google.com/macros/s/AKfycbzxo_Tcy-dGrJjF6fEiRYvcn9uF48fIoern1lTcMcyzg6aL5Z2UoStgShj10Y56p5FE/exec" style="max-width:520px">
+            <input type="text" id="gasUrlInput" class="form-input" placeholder="https://script.google.com/macros/s/AKfycbwUkoA5OwJAOx92PUjtT2rn9AICy30C1ZnY78_bTTx6kDH8VCl_NaXsc2hqQWWwZh4P/exec" style="max-width:520px">
             <button class="btn btn-primary btn-sm" onclick="applyGasUrl()">✔ ตั้งค่า URL</button>
           </div>
           <div id="gasUrlStatus" style="margin-top:8px;font-size:12px;color:var(--text3)">สถานะ: ยังไม่ได้ตั้งค่า GAS URL</div>
@@ -1800,11 +1927,8 @@ body.year-2570 #page-dashboard::before {
         </div>
       </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /layout -->
 
-      <!-- ===== GANTT CHART ===== -->
+<!-- ===== GANTT CHART ===== -->
       <div id="page-gantt" style="display:none">
         <div class="card" style="margin-bottom:1rem">
           <div class="gantt-filter-bar">
@@ -1891,6 +2015,296 @@ body.year-2570 #page-dashboard::before {
       </div>
 
 
+
+      <!-- ===== RISK MANAGEMENT PAGE ===== -->
+      <div id="page-risk" style="display:none">
+        <!-- Header + Project Selector -->
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-header" style="flex-wrap:wrap;gap:10px">
+            <span class="card-title">⚠️ ระบบบริหารความเสี่ยงโครงการ (PRM)</span>
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <select id="riskProjectSelect" class="risk-select" style="min-width:260px;max-width:340px;font-size:13px" onchange="loadRiskProject()">
+                <option value="">— เปิดรายการที่บันทึกไว้ —</option>
+              </select>
+              <button class="btn btn-sm" onclick="openAddRiskModal()" style="background:var(--accent);color:#fff;border-color:var(--accent);display:flex;align-items:center;gap:5px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                เพิ่มรายการใหม่
+              </button>
+              <button class="btn btn-sm" onclick="exportRiskPDF()" style="background:var(--green-light);color:var(--green);border-color:var(--green);display:flex;align-items:center;gap:5px">
+                📄 Export PDF
+              </button>
+            </div>
+          </div>
+          <!-- Saved records bar -->
+          <div id="riskRecordsBar" style="padding:.5rem 1.25rem;border-bottom:1px solid var(--border);background:var(--surface2);display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-height:44px">
+            <span style="font-size:12px;color:var(--text3);flex-shrink:0">รายการที่บันทึก:</span>
+            <div id="riskRecordChips" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
+            <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0">
+              <div id="riskSyncBadge"><span style="color:#9ca3af;font-size:12px">📴 ออฟไลน์</span></div>
+              <button onclick="loadAllRiskFromGAS()" title="Sync จาก Google Sheets"
+                style="padding:3px 10px;border-radius:99px;border:1.5px solid var(--border2);background:var(--surface);font-size:11.5px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px">
+                🔄 Sync
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="risk-tabs">
+          <button class="risk-tab active" onclick="switchRiskTab('prm01',this)">📋 PRM 01 · ประเมินความเสี่ยง</button>
+          <button class="risk-tab" onclick="switchRiskTab('prm02',this)">📊 PRM 02 · วิเคราะห์ความเสี่ยง</button>
+          <button class="risk-tab" onclick="switchRiskTab('prm03',this)">📈 PRM 03 · สรุประดับความเสี่ยง</button>
+          <button class="risk-tab" onclick="switchRiskTab('prm04',this)">🗂️ PRM 04 · แผนบริหารความเสี่ยง</button>
+          <button class="risk-tab" onclick="switchRiskTab('matrix',this)">🎯 Risk Matrix</button>
+        </div>
+
+        <!-- PRM 01: แบบประเมินความเสี่ยงของโครงการ -->
+        <div id="risk-prm01" class="risk-panel active">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">แบบ PRM 01 · แบบประเมินความเสี่ยงของโครงการ</span>
+            </div>
+            <div class="card-body">
+              <div class="risk-form-grid" style="margin-bottom:1rem">
+                <div>
+                  <label class="form-label">ยุทธศาสตร์ที่</label>
+                  <select id="rm_strategy" class="risk-select">
+                    <option value="">— เลือก —</option>
+                    <option value="1">ยุทธศาสตร์ที่ 1 การพัฒนาการจัดการศึกษาทางไกล</option>
+                    <option value="2">ยุทธศาสตร์ที่ 2 การพัฒนาคุณภาพการออกอากาศ</option>
+                    <option value="3">ยุทธศาสตร์ที่ 3 การพัฒนาครูและโรงเรียนปลายทาง</option>
+                    <option value="4">ยุทธศาสตร์ที่ 4 การบริหารจัดการองค์กร</option>
+                    <option value="5">งบบริหารสำนักงาน</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label">กลุ่มงาน / ฝ่าย / แผนก</label>
+                  <input type="text" id="rm_dept" class="risk-input" placeholder="เช่น วิชาการ, เทคโนโลยี...">
+                </div>
+                <div class="full">
+                  <label class="form-label">ชื่อโครงการ</label>
+                  <input type="text" id="rm_projname" class="risk-input" placeholder="ชื่อโครงการ...">
+                </div>
+                <div class="full">
+                  <label class="form-label">วัตถุประสงค์ของการบริหารความเสี่ยง</label>
+                  <textarea id="rm_objectives" class="risk-textarea" rows="4" placeholder="3.1 เพื่อ...&#10;3.2 เพื่อ...&#10;3.3 เพื่อ..."></textarea>
+                </div>
+              </div>
+
+              <!-- ตารางกิจกรรม/ความเสี่ยง -->
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+                <div style="font-weight:600;font-size:13px;color:var(--text)">กิจกรรมของโครงการและปัจจัยความเสี่ยง</div>
+              </div>
+              <div style="overflow-x:auto">
+                <table class="risk-table" id="prm01Table">
+                  <thead>
+                    <tr>
+                      <th style="width:30px">#</th>
+                      <th style="min-width:220px">กิจกรรมของโครงการ</th>
+                      <th style="min-width:160px">ประเภทของความเสี่ยง</th>
+                      <th style="min-width:220px">ปัจจัยความเสี่ยง</th>
+                      <th style="width:40px"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="prm01Body"></tbody>
+                </table>
+              </div>
+              <button class="add-row-btn" onclick="addPRM01Row()">+ เพิ่มกิจกรรม</button>
+            </div>
+          </div>
+          <!-- Bottom action bar PRM01 -->
+          <div class="risk-action-bar">
+            <div id="riskCurrentLabel" style="font-size:13px;color:var(--text2);display:flex;align-items:center;gap:6px">
+              <span id="riskCurrentName" style="font-weight:600;color:var(--text)">— ยังไม่ได้เลือกรายการ —</span>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-sm" onclick="cancelEditRisk()" style="color:var(--text2);border-color:var(--border2)">
+                ↩ ยกเลิก
+              </button>
+              <button class="btn btn-sm" onclick="saveRiskData()" style="background:var(--accent);color:#fff;border-color:var(--accent);display:flex;align-items:center;gap:5px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                💾 บันทึก
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRM 02: แบบวิเคราะห์ความเสี่ยง -->
+        <div id="risk-prm02" class="risk-panel">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">แบบ PRM 02 · แบบวิเคราะห์ความเสี่ยงของโครงการ</span>
+              <span style="font-size:12px;color:var(--text2);margin-left:1rem">(ประเมินโอกาสและผลกระทบ 1=น้อยที่สุด … 5=สูงที่สุด)</span>
+            </div>
+            <div class="card-body">
+              <div id="prm02Content">
+                <div style="text-align:center;padding:2rem;color:var(--text3)">กรุณากรอกข้อมูล PRM 01 ก่อน แล้วคลิก "บันทึก"</div>
+              </div>
+            </div>
+          </div>
+          <div class="risk-action-bar">
+            <div style="font-size:12px;color:var(--text2)">PRM 02 · ประเมินโอกาสและผลกระทบของแต่ละปัจจัยความเสี่ยง</div>
+            <button class="btn btn-sm" onclick="saveRiskData()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
+              💾 บันทึกการประเมิน
+            </button>
+          </div>
+        </div>
+
+        <!-- PRM 03: สรุประดับความเสี่ยง -->
+        <div id="risk-prm03" class="risk-panel">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">แบบ PRM 03 · แบบวิเคราะห์ความเสี่ยง (สรุปตาราง)</span>
+            </div>
+            <div class="card-body">
+              <div style="overflow-x:auto">
+                <table class="risk-table" id="prm03Table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>กิจกรรมโครงการ</th>
+                      <th>ประเภท และปัจจัยความเสี่ยง</th>
+                      <th style="text-align:center">โอกาส</th>
+                      <th style="text-align:center">ผลกระทบ</th>
+                      <th style="text-align:center">ระดับคะแนน</th>
+                      <th style="text-align:center">ระดับความเสี่ยง</th>
+                    </tr>
+                  </thead>
+                  <tbody id="prm03Body">
+                    <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text3)">กรุณากรอก PRM 01 และ 02 ก่อน</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRM 04: แผนบริหารความเสี่ยง -->
+        <div id="risk-prm04" class="risk-panel">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">แบบ PRM 04 · แผนบริหารความเสี่ยงของโครงการ</span>
+            </div>
+            <div class="card-body">
+              <div style="overflow-x:auto">
+                <table class="risk-table" id="prm04Table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th style="min-width:160px">กิจกรรมโครงการ</th>
+                      <th style="min-width:180px">ประเภท และปัจจัยความเสี่ยง</th>
+                      <th style="text-align:center;width:80px">ระดับความเสี่ยง</th>
+                      <th style="min-width:220px">การจัดการความเสี่ยง</th>
+                      <th style="min-width:100px">ระยะเวลา</th>
+                      <th style="min-width:100px">งบประมาณ</th>
+                      <th style="min-width:120px">ผู้รับผิดชอบ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="prm04Body"></tbody>
+                </table>
+              </div>
+              <div style="margin-top:.5rem;font-size:12px;color:var(--text2)">* แถวจะปรากฏโดยอัตโนมัติจากข้อมูล PRM 01-03 — กรอกแผนการจัดการในแต่ละแถว</div>
+            </div>
+          </div>
+          <div class="risk-action-bar">
+            <div style="font-size:12px;color:var(--text2)">PRM 04 · กรอกแผนจัดการแล้วบันทึก</div>
+            <button class="btn btn-sm" onclick="saveRiskData()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
+              💾 บันทึกแผนบริหารความเสี่ยง
+            </button>
+          </div>
+        </div>
+
+        <!-- Risk Matrix -->
+        <div id="risk-matrix" class="risk-panel">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">🎯 ตารางการประเมินความเสี่ยง (Risk Matrix)</span>
+            </div>
+            <div class="card-body">
+              <div class="risk-matrix-wrap">
+                <table class="risk-matrix">
+                  <tr>
+                    <th class="rm-head" rowspan="7" style="width:32px"><div class="impact-label">ผลกระทบ (Impact)</div></th>
+                    <th class="rm-head">5 - สูงที่สุด</th>
+                    <td class="rm-1-5">5</td><td class="rm-2-5">10</td><td class="rm-3-5">15</td><td class="rm-4-5">20</td><td class="rm-5-5">25</td>
+                  </tr>
+                  <tr>
+                    <th class="rm-head">4 - สูง</th>
+                    <td class="rm-1-4">4</td><td class="rm-2-4">8</td><td class="rm-3-4">12</td><td class="rm-4-4">16</td><td class="rm-5-4">20</td>
+                  </tr>
+                  <tr>
+                    <th class="rm-head">3 - ปานกลาง</th>
+                    <td class="rm-1-3">3</td><td class="rm-2-3">6</td><td class="rm-3-3">9</td><td class="rm-4-3">12</td><td class="rm-5-3">15</td>
+                  </tr>
+                  <tr>
+                    <th class="rm-head">2 - น้อย</th>
+                    <td class="rm-1-2">2</td><td class="rm-2-2">4</td><td class="rm-3-2">6</td><td class="rm-4-2">8</td><td class="rm-5-2">10</td>
+                  </tr>
+                  <tr>
+                    <th class="rm-head">1 - น้อยที่สุด</th>
+                    <td class="rm-1-1">1</td><td class="rm-2-1">2</td><td class="rm-3-1">3</td><td class="rm-4-1">4</td><td class="rm-5-1">5</td>
+                  </tr>
+                  <tr>
+                    <td colspan="6" style="background:#fff;border:none"></td>
+                  </tr>
+                  <tr>
+                    <th class="rm-head">โอกาส (Likelihood)</th>
+                    <th class="rm-head">1 - น้อยที่สุด</th>
+                    <th class="rm-head">2 - น้อย</th>
+                    <th class="rm-head">3 - ปานกลาง</th>
+                    <th class="rm-head">4 - สูง</th>
+                    <th class="rm-head">5 - สูงที่สุด</th>
+                  </tr>
+                </table>
+              </div>
+              <div style="margin-top:1.25rem">
+                <div style="font-weight:600;font-size:13px;margin-bottom:.5rem">คำอธิบายระดับความเสี่ยง (Risk Ranking)</div>
+                <table class="risk-table" style="max-width:680px">
+                  <thead>
+                    <tr><th>ระดับความเสี่ยง</th><th>คะแนน</th><th>คำอธิบาย</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="risk-score-badge risk-very-high">สูงมาก</span></td><td>17 – 25</td><td>ระดับที่ไม่สามารถยอมรับได้ จำเป็นต้องเร่งจัดการความเสี่ยงให้อยู่ในระดับที่ยอมรับได้ทันที</td></tr>
+                    <tr><td><span class="risk-score-badge risk-high">สูง</span></td><td>10 – 16</td><td>ระดับที่ไม่สามารถยอมรับได้ โดยต้องจัดการความเสี่ยงเพื่อให้อยู่ในระดับยอมรับได้</td></tr>
+                    <tr><td><span class="risk-score-badge risk-medium">ปานกลาง</span></td><td>4 – 9</td><td>ระดับที่ยอมรับได้ แต่ต้องมีการควบคุมเพื่อป้องกันไม่ให้ความเสี่ยงไปยังระดับที่ยอมรับไม่ได้</td></tr>
+                    <tr><td><span class="risk-score-badge risk-low">ต่ำ</span></td><td>1 – 3</td><td>ระดับที่ยอมรับได้ โดยใช้วิธีควบคุมปกติตามขั้นตอนการปฏิบัติงานที่กำหนด</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Current project risks on matrix -->
+              <div style="margin-top:1.25rem" id="matrixProjectRisks"></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /page-risk -->
+
+<!-- RISK: Add/Edit Modal -->
+<div class="risk-modal-overlay" id="riskAddModal">
+  <div class="risk-modal">
+    <div class="risk-modal-title">➕ เพิ่มรายการบริหารความเสี่ยงใหม่</div>
+    <div>
+      <label class="form-label" style="margin-bottom:6px;display:block">ชื่อโครงการ / รายการ <span class="required">*</span></label>
+      <input type="text" id="riskNewName" class="risk-input" placeholder="ระบุชื่อโครงการหรือรายการ..." style="margin-bottom:12px">
+      <label class="form-label" style="margin-bottom:6px;display:block">หรือเลือกจากโครงการที่มีอยู่</label>
+      <select id="riskNewFromProject" class="risk-select" style="margin-bottom:4px">
+        <option value="">— ไม่เชื่อมกับโครงการ (สร้างใหม่) —</option>
+      </select>
+      <div style="font-size:11.5px;color:var(--text3);margin-top:4px">หากเลือกโครงการ จะนำชื่อและยุทธศาสตร์มาใส่อัตโนมัติ</div>
+    </div>
+    <div class="risk-modal-footer">
+      <button class="btn btn-sm" onclick="closeAddRiskModal()" style="color:var(--text2);border-color:var(--border2)">ยกเลิก</button>
+      <button class="btn btn-sm" onclick="createNewRisk()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
+        ✅ สร้างรายการ
+      </button>
+    </div>
+  </div>
+</div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
 <!-- MODAL: Add/Edit -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
@@ -2637,7 +3051,7 @@ function resetToDefault() {
 
 // ===== NAVIGATION =====
 function showPage(page, strategyFilter, navEl) {
-  ['dashboard','projects','gsheet','gantt','actlog'].forEach(p => {
+  ['dashboard','projects','gsheet','gantt','actlog','risk'].forEach(p => {
     const el = document.getElementById('page-'+p);
     if (el) el.style.display = p===page ? 'block' : 'none';
   });
@@ -2650,7 +3064,8 @@ function showPage(page, strategyFilter, navEl) {
     projects:  ['รายการโครงการ','โครงการทั้งหมด 5 ยุทธศาสตร์'],
     gsheet:    ['Google Sheets','นำเข้า / ส่งออกข้อมูล'],
     gantt:     ['แผน Gantt Chart','ระยะเวลาดำเนินงานโครงการ ปีงบประมาณ พ.ศ. '+currentYear],
-    actlog:    ['ประวัติการแก้ไข','บันทึกการเพิ่ม / แก้ไข / ลบโครงการ']
+    actlog:    ['ประวัติการแก้ไข','บันทึกการเพิ่ม / แก้ไข / ลบโครงการ'],
+    risk:      ['บริหารความเสี่ยง (PRM)','แบบประเมินและบริหารความเสี่ยงของโครงการ ปีงบประมาณ พ.ศ. '+currentYear]
   };
   if(titles[page]){
     document.getElementById('topbar-title').textContent=titles[page][0];
@@ -2660,6 +3075,7 @@ function showPage(page, strategyFilter, navEl) {
   if(page==='dashboard') updateDashboard();
   if(page==='gantt') renderGantt();
   if(page==='actlog') renderActlog();
+  if(page==='risk') initRiskPageWithSync();
   if(page==='projects'){
     if(strategyFilter!==undefined) document.getElementById('filterStrategy').value=strategyFilter;
     currentPage=1; renderTable();
@@ -4196,7 +4612,7 @@ function renderCommitteeChart(fp) {
 
 // ===== GOOGLE SHEETS =====
 // *** URL ตายตัว — ดึงข้อมูลจาก Sheet นี้เท่านั้น ***
-const GAS_URL_2570 = 'https://script.google.com/macros/s/AKfycbzxo_Tcy-dGrJjF6fEiRYvcn9uF48fIoern1lTcMcyzg6aL5Z2UoStgShj10Y56p5FE/exec';
+const GAS_URL_2570 = 'https://script.google.com/macros/s/AKfycbwUkoA5OwJAOx92PUjtT2rn9AICy30C1ZnY78_bTTx6kDH8VCl_NaXsc2hqQWWwZh4P/exec';
 let _gasUrl = GAS_URL_2570;
 let GAS_ENABLED = true;
 
@@ -6589,6 +7005,933 @@ document.addEventListener('click', e => {
     }
   });
 })();
+
+// ===============================================================
+// RISK MANAGEMENT SYSTEM (PRM 01-04)
+// ===============================================================
+const RISK_STORAGE_KEY = 'dltv_risk_2570';
+
+let riskData = {};          // { recordId: { id, name, projId, meta, rows, analysis, plan } }
+let currentRiskId   = null; // active record ID
+let _analysisCache  = {};   // { rowIdx: {likelihood, impact} }
+
+const RISK_TYPES = [
+  'ความเสี่ยงด้านการปฏิบัติงาน',
+  'ความเสี่ยงด้านกฎหมายและระเบียบ',
+  'ความเสี่ยงด้านการเงิน',
+  'ความเสี่ยงด้านชื่อเสียง',
+  'ความเสี่ยงด้านเทคโนโลยีสารสนเทศ',
+  'ความเสี่ยงด้านทรัพยากรบุคคล',
+  'ความเสี่ยงด้านสิ่งแวดล้อม',
+  'อื่นๆ'
+];
+
+function loadRiskStorage(){
+  try { riskData = JSON.parse(localStorage.getItem(RISK_STORAGE_KEY)||'{}'); }
+  catch(e){ riskData = {}; }
+}
+function saveRiskStorage(){
+  try { localStorage.setItem(RISK_STORAGE_KEY, JSON.stringify(riskData)); } catch(e){}
+}
+
+function getRiskLevel(score){
+  if(score>=17) return {label:'สูงมาก', cls:'risk-very-high'};
+  if(score>=10) return {label:'สูง',    cls:'risk-high'};
+  if(score>=4)  return {label:'ปานกลาง',cls:'risk-medium'};
+  return {label:'ต่ำ', cls:'risk-low'};
+}
+function renderRiskBadge(score){
+  if(!score) return '';
+  const r=getRiskLevel(score);
+  return `<span class="risk-score-badge ${r.cls}">${r.label}</span>`;
+}
+
+// ── Modal: Add new risk record ──────────────────────────────────
+function openAddRiskModal(){
+  loadRiskStorage();
+  // populate project dropdown in modal
+  const sel = document.getElementById('riskNewFromProject');
+  if(sel){
+    sel.innerHTML = '<option value="">— ไม่เชื่อมกับโครงการ (สร้างใหม่) —</option>';
+    (projects||[]).forEach(p=>{
+      const opt=document.createElement('option');
+      opt.value = p.id||p.name;
+      opt.textContent = (p.name||'').slice(0,60);
+      sel.appendChild(opt);
+    });
+    sel.onchange = function(){
+      const nameInput = document.getElementById('riskNewName');
+      const proj = (projects||[]).find(p=>(p.id||p.name)===this.value);
+      if(proj && nameInput && !nameInput.value) nameInput.value = proj.name||'';
+    };
+  }
+  const overlay = document.getElementById('riskAddModal');
+  if(overlay){ overlay.classList.add('open'); }
+  const ni = document.getElementById('riskNewName');
+  if(ni){ ni.value=''; setTimeout(()=>ni.focus(),80); }
+}
+function closeAddRiskModal(){
+  const overlay = document.getElementById('riskAddModal');
+  if(overlay) overlay.classList.remove('open');
+}
+// Close modal on backdrop click
+document.addEventListener('click', e=>{
+  if(e.target && e.target.id==='riskAddModal') closeAddRiskModal();
+});
+
+function createNewRisk(){
+  const nameInput = document.getElementById('riskNewName');
+  const projSel   = document.getElementById('riskNewFromProject');
+  const name = (nameInput ? nameInput.value.trim() : '');
+  if(!name){ nameInput && (nameInput.style.borderColor='#dc2626'); nameInput && nameInput.focus(); return; }
+  if(nameInput) nameInput.style.borderColor='';
+
+  const projId = projSel ? projSel.value : '';
+  const proj   = projId ? (projects||[]).find(p=>(p.id||p.name)===projId) : null;
+
+  loadRiskStorage();
+  // Generate unique ID
+  const newId = 'risk_' + Date.now();
+  riskData[newId] = {
+    id:     newId,
+    name:   name,
+    projId: projId||null,
+    meta: {
+      strategy:   proj ? (proj.strategy||proj.strategies||'') : '',
+      dept:       '',
+      projname:   name,
+      objectives: ''
+    },
+    rows:     [],
+    analysis: {},
+    plan:     {}
+  };
+  saveRiskStorage();
+  closeAddRiskModal();
+  initRiskPage();
+  // Auto-load the new record
+  const sel = document.getElementById('riskProjectSelect');
+  if(sel){ sel.value = newId; }
+  loadRiskRecord(newId);
+}
+
+// ── Init page ────────────────────────────────────────────────────
+function initRiskPage(){
+  loadRiskStorage();
+
+  // Populate open-record dropdown (saved records only)
+  const sel = document.getElementById('riskProjectSelect');
+  if(sel){
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">— เปิดรายการที่บันทึกไว้ —</option>';
+    Object.values(riskData).forEach(rec=>{
+      const opt = document.createElement('option');
+      opt.value = rec.id;
+      opt.textContent = (rec.name||rec.id).slice(0,55);
+      sel.appendChild(opt);
+    });
+    if(prev && riskData[prev]) sel.value = prev;
+  }
+
+  // Populate modal project dropdown
+  const modalSel = document.getElementById('riskNewFromProject');
+  if(modalSel){
+    modalSel.innerHTML = '<option value="">— ไม่เชื่อมกับโครงการ (สร้างใหม่) —</option>';
+    (projects||[]).forEach(p=>{
+      const opt=document.createElement('option');
+      opt.value=p.id||p.name; opt.textContent=(p.name||'').slice(0,60);
+      modalSel.appendChild(opt);
+    });
+  }
+
+  renderRiskChips();
+  if(!currentRiskId){ clearRiskForms(); }
+}
+
+function initRiskPageWithSync(){
+  loadRiskStorage();
+  initRiskPage();
+  // Fetch from GAS on first open (once per page session)
+  if(!window._riskGasLoaded){
+    window._riskGasLoaded = true;
+    loadAllRiskFromGAS();
+  }
+}
+
+// called from select onchange
+function loadRiskProject(){
+  const sel = document.getElementById('riskProjectSelect');
+  if(sel && sel.value) loadRiskRecord(sel.value);
+  else { currentRiskId=null; clearRiskForms(); renderRiskChips(); }
+}
+
+function loadRiskRecord(id){
+  if(!id||!riskData[id]) return;
+  currentRiskId = id;
+  const rec = riskData[id];
+  const meta     = rec.meta||{};
+  const rows     = rec.rows||[];
+  const analysis = rec.analysis||{};
+  const plan     = rec.plan||{};
+
+  // Fill PRM01 meta
+  const strat=document.getElementById('rm_strategy'); if(strat) strat.value=meta.strategy||'';
+  const dept =document.getElementById('rm_dept');     if(dept)  dept.value =meta.dept||'';
+  const pname=document.getElementById('rm_projname'); if(pname) pname.value=meta.projname||rec.name||'';
+  const obj  =document.getElementById('rm_objectives');if(obj)  obj.value  =meta.objectives||'';
+
+  _analysisCache = { ...analysis };
+  renderPRM01Rows(rows);
+  renderPRM02(rows, analysis);
+  renderPRM03(rows, analysis);
+  renderPRM04(rows, analysis, plan);
+  renderMatrixPlot(rows, analysis);
+  renderRiskChips();
+  updateCurrentLabel(rec.name||id);
+
+  // Sync select
+  const sel=document.getElementById('riskProjectSelect');
+  if(sel) sel.value=id;
+}
+
+function updateCurrentLabel(name){
+  const el = document.getElementById('riskCurrentName');
+  if(el) el.textContent = name ? '✏️ ' + name : '— ยังไม่ได้เลือกรายการ —';
+}
+
+// ── Record chips (top bar) ───────────────────────────────────────
+function renderRiskChips(){
+  const container = document.getElementById('riskRecordChips');
+  if(!container) return;
+  const keys = Object.keys(riskData);
+  if(!keys.length){
+    container.innerHTML='<span style="font-size:12px;color:var(--text3)">ยังไม่มีรายการ — กด "เพิ่มรายการใหม่" เพื่อเริ่มต้น</span>';
+    return;
+  }
+  container.innerHTML = keys.map(id=>{
+    const rec = riskData[id];
+    const active = id===currentRiskId ? 'active':'';
+    return `<span class="risk-chip ${active}" onclick="loadRiskRecord('${id}')" title="${rec.name||id}">
+      ${(rec.name||id).slice(0,24)}
+      <button class="risk-chip-del" onclick="event.stopPropagation();deleteRiskRecord('${id}')" title="ลบรายการนี้">✕</button>
+    </span>`;
+  }).join('');
+}
+
+function deleteRiskRecord(id){
+  if(!confirm('ยืนยันลบรายการ "' + (riskData[id]?.name||id) + '" ?')) return;
+  delete riskData[id];
+  saveRiskStorage();
+  if(currentRiskId===id){ currentRiskId=null; clearRiskForms(); }
+  initRiskPage();
+  deleteRiskFromGAS(id).catch(()=>{});
+}
+
+// ── Clear forms ──────────────────────────────────────────────────
+function clearRiskForms(){
+  ['rm_strategy','rm_dept','rm_projname'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const obj=document.getElementById('rm_objectives'); if(obj) obj.value='';
+  _analysisCache={};
+  renderPRM01Rows([]);
+  renderPRM02([],{});
+  renderPRM03([],{});
+  renderPRM04([],{},{});
+  updateCurrentLabel('');
+}
+
+// ── Tab switch ───────────────────────────────────────────────────
+function switchRiskTab(tab, btn){
+  document.querySelectorAll('.risk-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.risk-tab').forEach(b=>b.classList.remove('active'));
+  const panel=document.getElementById('risk-'+tab);
+  if(panel) panel.classList.add('active');
+  if(btn)   btn.classList.add('active');
+  if(tab==='prm02') {
+    const rows=collectPRM01Rows();
+    if(!rows||rows.length===0){ 
+      document.getElementById('prm02Content').innerHTML='<div style="text-align:center;padding:2rem;color:var(--text3)">กรุณากรอกข้อมูลกิจกรรม/ปัจจัยความเสี่ยงใน PRM 01 ก่อน</div>';
+    } else {
+      const saved=currentRiskId?(riskData[currentRiskId]?.analysis||{}):{};
+      renderPRM02(rows,{...saved,..._analysisCache});
+    }
+  }
+  if(tab==='prm03') collectAndRenderPRM03();
+  if(tab==='prm04') collectAndRenderPRM04();
+  if(tab==='matrix') collectAndRenderMatrix();
+}
+
+// ── PRM 01 Rows ──────────────────────────────────────────────────
+function renderPRM01Rows(rows){
+  const tbody=document.getElementById('prm01Body');
+  if(!tbody) return;
+  tbody.innerHTML='';
+  if(!rows||rows.length===0){ addPRM01Row(); return; }
+  rows.forEach((r,i)=>addPRM01Row(r,i));
+}
+function addPRM01Row(data,idx){
+  const tbody=document.getElementById('prm01Body');
+  if(!tbody) return;
+  const i=idx!==undefined?idx:tbody.rows.length;
+  const r=data||{};
+  const tr=document.createElement('tr');
+  tr.dataset.idx=i;
+  tr.innerHTML=`
+    <td style="text-align:center;font-weight:600;color:var(--text2)">${i+1}</td>
+    <td><textarea class="risk-textarea" style="min-height:48px" placeholder="ระบุกิจกรรม...">${r.activity||''}</textarea></td>
+    <td><select class="risk-select">
+      <option value="">— เลือก —</option>
+      ${RISK_TYPES.map(t=>`<option ${r.riskType===t?'selected':''}>${t}</option>`).join('')}
+    </select></td>
+    <td><textarea class="risk-textarea" style="min-height:48px" placeholder="ระบุปัจจัยความเสี่ยง...">${r.riskFactor||''}</textarea></td>
+    <td style="text-align:center">
+      <button class="del-row-btn" onclick="this.closest('tr').remove();reindexPRM01()">✕</button>
+    </td>`;
+  tbody.appendChild(tr);
+}
+function reindexPRM01(){
+  const tbody=document.getElementById('prm01Body');
+  if(!tbody) return;
+  Array.from(tbody.rows).forEach((tr,i)=>{ tr.dataset.idx=i; tr.cells[0].textContent=i+1; });
+}
+function collectPRM01Rows(){
+  const tbody=document.getElementById('prm01Body');
+  if(!tbody) return [];
+  return Array.from(tbody.rows).map(tr=>{
+    const tas=tr.querySelectorAll('textarea');
+    return {
+      activity:   (tas[0]?.value||'').trim(),
+      riskType:   tr.querySelector('select')?.value||'',
+      riskFactor: (tas[1]?.value||'').trim()
+    };
+  }).filter(r=>r.activity||r.riskFactor);
+}
+function collectPRM01Meta(){
+  return {
+    strategy:   document.getElementById('rm_strategy')?.value||'',
+    dept:       document.getElementById('rm_dept')?.value||'',
+    projname:   document.getElementById('rm_projname')?.value||'',
+    objectives: document.getElementById('rm_objectives')?.value||''
+  };
+}
+
+// ── PRM 02 ───────────────────────────────────────────────────────
+function ratingLabel(type,val){
+  const L=['','น้อยที่สุด','น้อย','ปานกลาง','สูง','สูงที่สุด'];
+  return val?L[val]:'';
+}
+function renderPRM02(rows,analysis){
+  const cont=document.getElementById('prm02Content');
+  if(!cont) return;
+  if(!rows||rows.length===0){
+    cont.innerHTML='<div style="text-align:center;padding:2rem;color:var(--text3)">กรุณากรอกข้อมูล PRM 01 ก่อน แล้วคลิก "💾 บันทึก"</div>';
+    return;
+  }
+  cont.innerHTML=rows.map((r,i)=>{
+    const a=(analysis&&analysis[i])||{};
+    return `<div style="border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem;background:#fafbff">
+      <div style="font-weight:700;font-size:13px;margin-bottom:.75rem;color:var(--text)">
+        <span style="background:var(--accent-light);color:var(--accent);border-radius:99px;padding:1px 10px;font-size:11px;margin-right:8px">${i+1}</span>
+        ${r.riskType||'ความเสี่ยง'} — ${(r.riskFactor||'').slice(0,80)}
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:.25rem">กิจกรรม: ${(r.activity||'').slice(0,100)}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:.75rem">
+        <div>
+          <div style="font-weight:600;font-size:12px;margin-bottom:.4rem">โอกาส (Likelihood)</div>
+          <div class="risk-rating-row" id="likRows${i}">
+            ${[1,2,3,4,5].map(v=>`<button class="risk-rating-btn${a.likelihood===v?' sel-'+v:''}" onclick="setRating('likelihood',${i},${v})">${v}</button>`).join('')}
+            <span style="font-size:12px;color:var(--text2);margin-left:4px" id="likLabel${i}">${ratingLabel('likelihood',a.likelihood||0)}</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:600;font-size:12px;margin-bottom:.4rem">ผลกระทบ (Impact)</div>
+          <div class="risk-rating-row" id="impRows${i}">
+            ${[1,2,3,4,5].map(v=>`<button class="risk-rating-btn${a.impact===v?' sel-'+v:''}" onclick="setRating('impact',${i},${v})">${v}</button>`).join('')}
+            <span style="font-size:12px;color:var(--text2);margin-left:4px" id="impLabel${i}">${ratingLabel('impact',a.impact||0)}</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:.75rem;display:flex;align-items:center;gap:10px">
+        <span style="font-size:12.5px;font-weight:600">ระดับคะแนน:</span>
+        <span id="scoreDisp${i}" style="font-size:15px;font-weight:700;color:var(--accent)">${(a.likelihood||0)*(a.impact||0)||0}</span>
+        <span id="levelDisp${i}">${renderRiskBadge((a.likelihood||0)*(a.impact||0))}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setRating(type,rowIdx,val){
+  if(!_analysisCache[rowIdx]) _analysisCache[rowIdx]={};
+  _analysisCache[rowIdx][type]=val;
+  const cid=type==='likelihood'?'likRows'+rowIdx:'impRows'+rowIdx;
+  const con=document.getElementById(cid);
+  if(con){
+    con.querySelectorAll('.risk-rating-btn').forEach((btn,i)=>{ btn.className='risk-rating-btn'+(i+1===val?' sel-'+val:''); });
+    const lbl=document.getElementById(type==='likelihood'?'likLabel'+rowIdx:'impLabel'+rowIdx);
+    if(lbl) lbl.textContent=ratingLabel(type,val);
+  }
+  const a=_analysisCache[rowIdx];
+  const score=(a.likelihood||0)*(a.impact||0);
+  const se=document.getElementById('scoreDisp'+rowIdx); if(se) se.textContent=score||0;
+  const le=document.getElementById('levelDisp'+rowIdx); if(le) le.innerHTML=renderRiskBadge(score);
+}
+function collectAnalysis(){ return {..._analysisCache}; }
+
+// ── PRM 03 ───────────────────────────────────────────────────────
+function collectAndRenderPRM03(){
+  const rows=collectPRM01Rows();
+  const saved=currentRiskId?(riskData[currentRiskId]?.analysis||{}):{};
+  const merged={...saved,..._analysisCache};
+  renderPRM03(rows,merged);
+}
+function renderPRM03(rows,analysis){
+  const tbody=document.getElementById('prm03Body');
+  if(!tbody) return;
+  if(!rows||rows.length===0){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text3)">กรุณากรอก PRM 01 และ 02 ก่อน</td></tr>'; return; }
+  tbody.innerHTML=rows.map((r,i)=>{
+    const a=(analysis&&analysis[i])||{};
+    const lik=a.likelihood||0, imp=a.impact||0, score=lik*imp;
+    const lvl=score?getRiskLevel(score):null;
+    return `<tr>
+      <td style="text-align:center">${i+1}</td>
+      <td>${r.activity||''}</td>
+      <td><strong>${r.riskType||''}</strong><br><span style="font-size:12px;color:var(--text2)">${r.riskFactor||''}</span></td>
+      <td style="text-align:center;font-weight:700">${lik||''}</td>
+      <td style="text-align:center;font-weight:700">${imp||''}</td>
+      <td style="text-align:center;font-weight:700;font-size:16px;color:var(--accent)">${score||''}</td>
+      <td style="text-align:center">${lvl?`<span class="risk-score-badge ${lvl.cls}">${lvl.label}</span>`:''}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── PRM 04 ───────────────────────────────────────────────────────
+function collectAndRenderPRM04(){
+  const rows=collectPRM01Rows();
+  const saved=currentRiskId?(riskData[currentRiskId]?.analysis||{}):{};
+  const savedPlan=currentRiskId?(riskData[currentRiskId]?.plan||{}):{};
+  const merged={...saved,..._analysisCache};
+  renderPRM04(rows,merged,savedPlan);
+}
+function renderPRM04(rows,analysis,plan){
+  const tbody=document.getElementById('prm04Body');
+  if(!tbody) return;
+  if(!rows||rows.length===0){ tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text3)">กรุณากรอก PRM 01 ก่อน</td></tr>'; return; }
+  const indexed=rows.map((r,i)=>{
+    const a=(analysis&&analysis[i])||{};
+    return {r,i,a,score:(a.likelihood||0)*(a.impact||0)};
+  }).sort((a,b)=>b.score-a.score);
+  tbody.innerHTML=indexed.map(({r,i,a,score})=>{
+    const lvl=score?getRiskLevel(score):null;
+    const p=(plan&&plan[i])||{};
+    return `<tr>
+      <td style="text-align:center">${i+1}</td>
+      <td style="font-size:12px">${r.activity||''}</td>
+      <td style="font-size:12px"><strong>${r.riskType||''}</strong><br>${r.riskFactor||''}</td>
+      <td style="text-align:center">${score?`<strong style="font-size:14px">${score}</strong><br>`:''} ${lvl?`<span class="risk-score-badge ${lvl.cls}">${lvl.label}</span>`:''}</td>
+      <td><textarea class="risk-textarea" style="min-height:56px;font-size:12px" placeholder="ระบุแนวทางการจัดการ..." onchange="savePlanCell(${i},'management',this.value)">${p.management||''}</textarea></td>
+      <td><input type="text" class="risk-input" style="font-size:12px" placeholder="เช่น ม.ค.–มี.ค.68" value="${p.timeline||''}" onchange="savePlanCell(${i},'timeline',this.value)"></td>
+      <td><input type="text" class="risk-input" style="font-size:12px" placeholder="งบประมาณ..." value="${p.budget||''}" onchange="savePlanCell(${i},'budget',this.value)"></td>
+      <td><input type="text" class="risk-input" style="font-size:12px" placeholder="ผู้รับผิดชอบ..." value="${p.owner||''}" onchange="savePlanCell(${i},'owner',this.value)"></td>
+    </tr>`;
+  }).join('');
+}
+function savePlanCell(rowIdx,field,val){
+  if(!currentRiskId) return;
+  if(!riskData[currentRiskId]) riskData[currentRiskId]={};
+  if(!riskData[currentRiskId].plan) riskData[currentRiskId].plan={};
+  if(!riskData[currentRiskId].plan[rowIdx]) riskData[currentRiskId].plan[rowIdx]={};
+  riskData[currentRiskId].plan[rowIdx][field]=val;
+  saveRiskStorage();
+}
+
+// ── Risk Matrix ──────────────────────────────────────────────────
+function collectAndRenderMatrix(){
+  const rows=collectPRM01Rows();
+  const saved=currentRiskId?(riskData[currentRiskId]?.analysis||{}):{};
+  const merged={...saved,..._analysisCache};
+  renderMatrixPlot(rows,merged);
+}
+function renderMatrixPlot(rows,analysis){
+  const cont=document.getElementById('matrixProjectRisks');
+  if(!cont) return;
+  if(!rows||rows.length===0){ cont.innerHTML=''; return; }
+  const items=rows.map((r,i)=>{
+    const a=(analysis&&analysis[i])||{};
+    return {...r,i,lik:a.likelihood||0,imp:a.impact||0,score:(a.likelihood||0)*(a.impact||0)};
+  }).filter(x=>x.lik&&x.imp);
+  if(!items.length){ cont.innerHTML='<div style="color:var(--text2);font-size:13px">ยังไม่มีข้อมูลการประเมินโอกาส/ผลกระทบ กรุณากรอก PRM 02</div>'; return; }
+  cont.innerHTML=`<div style="font-weight:600;font-size:13px;margin-bottom:.5rem">ตำแหน่งความเสี่ยงของรายการนี้</div>
+    <table class="risk-table" style="max-width:600px">
+      <thead><tr><th>#</th><th>ปัจจัยความเสี่ยง</th><th style="text-align:center">โอกาส</th><th style="text-align:center">ผลกระทบ</th><th style="text-align:center">คะแนน</th><th style="text-align:center">ระดับ</th></tr></thead>
+      <tbody>${items.map(x=>{
+        const lvl=getRiskLevel(x.score);
+        return `<tr>
+          <td style="text-align:center">${x.i+1}</td>
+          <td style="font-size:12px">${x.riskFactor||x.activity||''}</td>
+          <td style="text-align:center">${x.lik}</td>
+          <td style="text-align:center">${x.imp}</td>
+          <td style="text-align:center;font-weight:700">${x.score}</td>
+          <td style="text-align:center"><span class="risk-score-badge ${lvl.cls}">${lvl.label}</span></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+}
+
+// ── Save ─────────────────────────────────────────────────────────
+function saveRiskData(){
+  if(!currentRiskId){ showRiskToast('⚠️ กรุณาเปิดหรือสร้างรายการก่อนบันทึก','#d97706'); return; }
+  const rows     = collectPRM01Rows();
+  const meta     = collectPRM01Meta();
+  const analysis = collectAnalysis();
+  const existing = riskData[currentRiskId]||{};
+  const mergedA  = {...(existing.analysis||{}),...analysis};
+
+  riskData[currentRiskId] = {
+    ...existing,
+    name:     meta.projname || existing.name || currentRiskId,
+    meta,
+    rows,
+    analysis: mergedA,
+    plan:     existing.plan||{}
+  };
+  saveRiskStorage();
+
+  _analysisCache = {...mergedA};
+  renderPRM02(rows, mergedA);
+  renderPRM03(rows, mergedA);
+  renderPRM04(rows, mergedA, riskData[currentRiskId].plan);
+  renderRiskChips();
+  updateCurrentLabel(riskData[currentRiskId].name);
+  initRiskPage();
+  const sel=document.getElementById('riskProjectSelect');
+  if(sel) sel.value=currentRiskId;
+
+  showRiskToast('✅ บันทึกข้อมูลสำเร็จ');
+
+  // ── push to GAS ──
+  updateRiskSyncBadge('loading');
+  saveRiskToGAS(currentRiskId)
+    .then(r => showRiskToast(r && r.success ? '☁️ Sync ขึ้น Google Sheets สำเร็จ' : '⚠️ บันทึกไว้ใน localStorage แล้ว (GAS ไม่ตอบ)', r && r.success ? '#059669' : '#d97706'))
+    .catch(()=> showRiskToast('⚠️ บันทึกไว้ใน localStorage แล้ว', '#d97706'));
+}
+
+function cancelEditRisk(){
+  if(!currentRiskId){ clearRiskForms(); return; }
+  // Reload from storage
+  loadRiskRecord(currentRiskId);
+  showRiskToast('↩ ยกเลิกการแก้ไข — โหลดข้อมูลที่บันทึกไว้แล้ว','#6b7280');
+}
+
+// ── GAS Sync ─────────────────────────────────────────────────────
+let _riskGasSyncing = false;
+
+function saveRiskToGAS(id){
+  if(!_gasUrl || _gasUrl.includes('YOUR_GAS') || !id || !riskData[id]) return Promise.resolve();
+  const rec = riskData[id];
+  return gasPost('saveRisk', { data: rec })
+    .then(res => {
+      updateRiskSyncBadge(res && res.success ? 'ok' : 'err');
+      return res;
+    })
+    .catch(()=> updateRiskSyncBadge('err'));
+}
+
+function deleteRiskFromGAS(id){
+  if(!_gasUrl || _gasUrl.includes('YOUR_GAS')) return Promise.resolve();
+  return gasPost('deleteRisk', { id })
+    .then(res => { updateRiskSyncBadge(res && res.success ? 'ok' : 'err'); return res; })
+    .catch(()=> updateRiskSyncBadge('err'));
+}
+
+function loadAllRiskFromGAS(){
+  if(!_gasUrl || _gasUrl.includes('YOUR_GAS')) return Promise.resolve();
+  if(_riskGasSyncing) return Promise.resolve();
+  _riskGasSyncing = true;
+  updateRiskSyncBadge('loading');
+  return gasGet('getAllRisk', {})
+    .then(res => {
+      _riskGasSyncing = false;
+      if(res && res.success && Array.isArray(res.data)){
+        // Merge: GAS is source of truth; local additions preserved if not in GAS
+        const gasMap = {};
+        res.data.forEach(r => { if(r.id) gasMap[r.id] = r; });
+        // rebuild riskData from GAS, then add any local-only records
+        const merged = { ...gasMap };
+        Object.keys(riskData).forEach(id => {
+          if(!merged[id]) merged[id] = riskData[id]; // local-only, keep it
+        });
+        riskData = merged;
+        saveRiskStorage();
+        initRiskPage();
+        if(currentRiskId && riskData[currentRiskId]) loadRiskRecord(currentRiskId);
+        updateRiskSyncBadge('ok');
+      } else {
+        updateRiskSyncBadge('err');
+      }
+    })
+    .catch(()=>{ _riskGasSyncing=false; updateRiskSyncBadge('err'); });
+}
+
+function updateRiskSyncBadge(state){
+  const el = document.getElementById('riskSyncBadge');
+  if(!el) return;
+  const map = {
+    loading: ['🔄','กำลัง Sync...','#3b82f6'],
+    ok:      ['☁️','Synced','#059669'],
+    err:     ['⚠️','Sync ไม่ได้','#d97706'],
+    off:     ['📴','ออฟไลน์','#9ca3af'],
+  };
+  const [icon, label, color] = map[state]||map.off;
+  el.innerHTML = `<span style="color:${color};font-size:12px;display:flex;align-items:center;gap:4px">${icon} ${label}</span>`;
+}
+
+function gasGet(action, params){
+  return new Promise((resolve, reject) => {
+    const cbName = '_gasCbR_' + Date.now();
+    const timeout = setTimeout(()=>{ delete window[cbName]; resolve({ success:false }); }, 20000);
+    window[cbName] = function(data){ clearTimeout(timeout); delete window[cbName]; resolve(data); };
+    const p = new URLSearchParams({ action, callback: cbName, ...params });
+    const script = document.createElement('script');
+    script.src = _gasUrl + '?' + p.toString();
+    script.onerror = ()=>{ clearTimeout(timeout); delete window[cbName]; reject(new Error('net')); };
+    document.head.appendChild(script);
+  });
+}
+
+function showRiskToast(msg, bg='#1a9a5c'){
+  const t=document.createElement('div');
+  t.style.cssText=`position:fixed;bottom:24px;right:24px;background:${bg};color:#fff;padding:.65rem 1.25rem;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.18);transition:opacity .4s`;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; setTimeout(()=>t.remove(),400); },2600);
+}
+
+function exportRiskPDF(){
+  if(!currentRiskId){ showRiskToast('⚠️ กรุณาเลือกรายการก่อน Export','#d97706'); return; }
+  const rec      = riskData[currentRiskId]||{};
+  const meta     = rec.meta||{};
+  const rows     = rec.rows||[];
+  const analysis = rec.analysis||{};
+  const plan     = rec.plan||{};
+
+  const orgName  = 'มูลนิธิการศึกษาทางไกลผ่านดาวเทียม';
+  const projName = meta.projname || rec.name || '';
+  const strategy = meta.strategy ? 'ยุทธศาสตร์ที่ ' + meta.strategy : '';
+  const dept     = meta.dept || '';
+  const objectives = (meta.objectives||'').replace(/\n/g,'<br>');
+  const today = new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+
+  const STRAT_LABELS = {
+    '1':'ยุทธศาสตร์ที่ 1 การพัฒนาการจัดการศึกษาทางไกล',
+    '2':'ยุทธศาสตร์ที่ 2 การพัฒนาคุณภาพการออกอากาศ',
+    '3':'ยุทธศาสตร์ที่ 3 การพัฒนาครูและโรงเรียนปลายทาง',
+    '4':'ยุทธศาสตร์ที่ 4 การบริหารจัดการองค์กร',
+    '5':'งบบริหารสำนักงาน'
+  };
+  const stratLabel = STRAT_LABELS[meta.strategy] || (meta.strategy||'');
+
+  // ── helpers ──
+  function lvlBg(score){
+    if(score>=17) return '#fecaca:#991b1b'; // red
+    if(score>=10) return '#fef3c7:#92400e'; // amber
+    if(score>=4)  return '#d1fae5:#065f46'; // green
+    return '#dbeafe:#1e40af';               // blue
+  }
+  function lvlLabel(score){
+    if(!score) return '';
+    if(score>=17) return 'สูงมาก';
+    if(score>=10) return 'สูง';
+    if(score>=4)  return 'ปานกลาง';
+    return 'ต่ำ';
+  }
+  function scoreBadge(score){
+    if(!score) return '';
+    const [bg,fg]=lvlBg(score).split(':');
+    return `<span style="display:inline-block;padding:2px 10px;border-radius:99px;background:${bg};color:${fg};font-weight:700;font-size:11px">${lvlLabel(score)} (${score})</span>`;
+  }
+
+  // ── PRM 01 table rows ──
+  const prm01Rows = rows.map((r,i)=>`
+    <tr>
+      <td style="text-align:center">${i+1}</td>
+      <td>${r.activity||''}</td>
+      <td>${r.riskType||''}</td>
+      <td>${r.riskFactor||''}</td>
+    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:#9ca3af">— ไม่มีข้อมูล —</td></tr>';
+
+  // ── PRM 02/03 combined rows ──
+  const prm0203Rows = rows.map((r,i)=>{
+    const a=(analysis[i]||{});
+    const lik=a.likelihood||0, imp=a.impact||0, score=lik*imp;
+    return `<tr>
+      <td style="text-align:center">${i+1}</td>
+      <td>${r.activity||''}</td>
+      <td><strong>${r.riskType||''}</strong><br><span style="font-size:11px;color:#6b7280">${r.riskFactor||''}</span></td>
+      <td style="text-align:center;font-weight:700">${lik||''}</td>
+      <td style="text-align:center;font-weight:700">${imp||''}</td>
+      <td style="text-align:center;font-weight:700">${score||''}</td>
+      <td style="text-align:center">${scoreBadge(score)}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;color:#9ca3af">— ไม่มีข้อมูล —</td></tr>';
+
+  // ── PRM 04 rows ──
+  const sorted04 = rows.map((r,i)=>{
+    const a=(analysis[i]||{});
+    return {r,i,score:(a.likelihood||0)*(a.impact||0)};
+  }).sort((a,b)=>b.score-a.score);
+  const prm04Rows = sorted04.map(({r,i,score})=>{
+    const p=plan[i]||{};
+    return `<tr>
+      <td style="text-align:center">${i+1}</td>
+      <td>${r.activity||''}</td>
+      <td><strong>${r.riskType||''}</strong><br><span style="font-size:11px;color:#6b7280">${r.riskFactor||''}</span></td>
+      <td style="text-align:center">${scoreBadge(score)}</td>
+      <td>${p.management||''}</td>
+      <td style="text-align:center">${p.timeline||''}</td>
+      <td style="text-align:center">${p.budget||''}</td>
+      <td>${p.owner||''}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="8" style="text-align:center;color:#9ca3af">— ไม่มีข้อมูล —</td></tr>';
+
+  // ── Full HTML ──
+  const html = `<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>แบบประเมินความเสี่ยง PRM — ${projName}</title>
+<style>
+  @page { size:A4 landscape; margin:16mm 14mm; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Sarabun','TH Sarabun New',sans-serif; font-size:13px; color:#1f2937; background:#fff; }
+
+  /* ── Page break ── */
+  .page-break { page-break-before:always; }
+
+  /* ── Header ── */
+  .doc-header {
+    display:flex; align-items:center; gap:16px;
+    border-bottom:3px solid #1d4ed8; padding-bottom:10px; margin-bottom:16px;
+  }
+  .doc-header-logo {
+    width:60px; height:60px; border-radius:50%;
+    border:2px solid #1d4ed8; object-fit:cover;
+    display:flex; align-items:center; justify-content:center;
+    font-size:24px; background:#eff6ff;
+  }
+  .doc-header-text h1 { font-size:16px; font-weight:800; color:#1e3a8a; }
+  .doc-header-text h2 { font-size:13px; color:#3b82f6; font-weight:600; }
+  .doc-header-text p  { font-size:11px; color:#6b7280; margin-top:2px; }
+
+  /* ── Section title ── */
+  .section-title {
+    background:linear-gradient(90deg,#1d4ed8,#3b82f6);
+    color:#fff; padding:7px 14px; border-radius:6px;
+    font-size:14px; font-weight:700; margin-bottom:12px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .section-tag {
+    background:rgba(255,255,255,.25); padding:2px 8px;
+    border-radius:99px; font-size:11px; font-weight:800;
+  }
+
+  /* ── Meta grid ── */
+  .meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px 24px; margin-bottom:14px; }
+  .meta-grid .full { grid-column:1/-1; }
+  .meta-item label { font-size:11px; color:#6b7280; font-weight:600; display:block; margin-bottom:2px; }
+  .meta-item .value {
+    padding:5px 10px; border:1px solid #e5e7eb; border-radius:5px;
+    background:#f9fafb; font-size:13px; min-height:30px;
+  }
+  .meta-item .value.tall { min-height:60px; white-space:pre-wrap; }
+
+  /* ── Table ── */
+  table { width:100%; border-collapse:collapse; font-size:12px; margin-bottom:6px; }
+  th {
+    background:#1e3a8a; color:#fff; padding:7px 8px;
+    text-align:left; font-weight:700; font-size:11.5px;
+  }
+  th.center { text-align:center; }
+  td { padding:6px 8px; border:1px solid #e5e7eb; vertical-align:top; line-height:1.5; }
+  tr:nth-child(even) td { background:#f0f4ff; }
+  tr:hover td { background:#e8f0fe; }
+
+  /* ── Risk legend ── */
+  .legend { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; font-size:11px; }
+  .legend-item { display:flex; align-items:center; gap:4px; }
+  .legend-dot { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
+
+  /* ── Signature block ── */
+  .sig-block {
+    display:grid; grid-template-columns:1fr 1fr 1fr;
+    gap:24px; margin-top:20px; padding-top:14px;
+    border-top:1px dashed #d1d5db;
+  }
+  .sig-item { text-align:center; }
+  .sig-line { border-top:1px solid #9ca3af; margin:40px 16px 6px; }
+  .sig-label { font-size:11.5px; color:#374151; }
+  .sig-sub   { font-size:11px; color:#9ca3af; }
+
+  /* ── Print ── */
+  @media print {
+    body { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .no-print { display:none; }
+  }
+  @media screen {
+    body { background:#e5e7eb; padding:24px; }
+    .page { background:#fff; padding:20mm 16mm; max-width:297mm; margin:0 auto 24px; border-radius:6px; box-shadow:0 4px 20px rgba(0,0,0,.12); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====== PAGE 1: PRM 01 ====== -->
+<div class="page">
+  <div class="doc-header">
+    <div class="doc-header-logo">🏫</div>
+    <div class="doc-header-text">
+      <h1>${orgName}</h1>
+      <h2>แบบประเมินและบริหารความเสี่ยงของโครงการ ปีงบประมาณ พ.ศ. 2570</h2>
+      <p>วันที่พิมพ์: ${today}</p>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <span class="section-tag">PRM 01</span> แบบประเมินความเสี่ยงของโครงการ
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-item">
+      <label>ยุทธศาสตร์</label>
+      <div class="value">${stratLabel||'—'}</div>
+    </div>
+    <div class="meta-item">
+      <label>กลุ่มงาน / ฝ่าย / แผนก</label>
+      <div class="value">${dept||'—'}</div>
+    </div>
+    <div class="meta-item full">
+      <label>ชื่อโครงการ</label>
+      <div class="value">${projName||'—'}</div>
+    </div>
+    <div class="meta-item full">
+      <label>วัตถุประสงค์ของการบริหารความเสี่ยง</label>
+      <div class="value tall">${objectives||'—'}</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="center" style="width:36px">#</th>
+        <th style="width:28%">กิจกรรมของโครงการ</th>
+        <th style="width:26%">ประเภทของความเสี่ยง</th>
+        <th>ปัจจัยความเสี่ยง</th>
+      </tr>
+    </thead>
+    <tbody>${prm01Rows}</tbody>
+  </table>
+</div>
+
+<!-- ====== PAGE 2: PRM 02 + 03 ====== -->
+<div class="page page-break">
+  <div class="doc-header">
+    <div class="doc-header-logo">🏫</div>
+    <div class="doc-header-text">
+      <h1>${orgName}</h1>
+      <h2>โครงการ: ${projName}</h2>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <span class="section-tag">PRM 02 &amp; 03</span> แบบวิเคราะห์และสรุประดับความเสี่ยง
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="center" style="width:32px">#</th>
+        <th style="width:22%">กิจกรรมโครงการ</th>
+        <th style="width:28%">ประเภท / ปัจจัยความเสี่ยง</th>
+        <th class="center" style="width:60px">โอกาส<br>(1–5)</th>
+        <th class="center" style="width:60px">ผลกระทบ<br>(1–5)</th>
+        <th class="center" style="width:56px">คะแนน</th>
+        <th class="center" style="width:90px">ระดับความเสี่ยง</th>
+      </tr>
+    </thead>
+    <tbody>${prm0203Rows}</tbody>
+  </table>
+
+  <div class="legend">
+    <strong style="font-size:11.5px">ระดับความเสี่ยง:</strong>
+    <div class="legend-item"><div class="legend-dot" style="background:#fecaca"></div><span style="color:#991b1b;font-weight:700">สูงมาก</span> (17–25)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fef3c7"></div><span style="color:#92400e;font-weight:700">สูง</span> (10–16)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#d1fae5"></div><span style="color:#065f46;font-weight:700">ปานกลาง</span> (4–9)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#dbeafe"></div><span style="color:#1e40af;font-weight:700">ต่ำ</span> (1–3)</div>
+  </div>
+</div>
+
+<!-- ====== PAGE 3: PRM 04 ====== -->
+<div class="page page-break">
+  <div class="doc-header">
+    <div class="doc-header-logo">🏫</div>
+    <div class="doc-header-text">
+      <h1>${orgName}</h1>
+      <h2>โครงการ: ${projName}</h2>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <span class="section-tag">PRM 04</span> แผนบริหารความเสี่ยงของโครงการ
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="center" style="width:32px">#</th>
+        <th style="width:16%">กิจกรรมโครงการ</th>
+        <th style="width:22%">ประเภท / ปัจจัยความเสี่ยง</th>
+        <th class="center" style="width:78px">ระดับความเสี่ยง</th>
+        <th>การจัดการความเสี่ยง</th>
+        <th class="center" style="width:72px">ระยะเวลา</th>
+        <th class="center" style="width:76px">งบประมาณ</th>
+        <th style="width:80px">ผู้รับผิดชอบ</th>
+      </tr>
+    </thead>
+    <tbody>${prm04Rows}</tbody>
+  </table>
+
+  <div class="sig-block">
+    <div class="sig-item">
+      <div class="sig-line"></div>
+      <div class="sig-label">ผู้จัดทำ / เจ้าของความเสี่ยง</div>
+      <div class="sig-sub">วันที่ ............./............./...........</div>
+    </div>
+    <div class="sig-item">
+      <div class="sig-line"></div>
+      <div class="sig-label">ผู้ตรวจสอบ</div>
+      <div class="sig-sub">วันที่ ............./............./...........</div>
+    </div>
+    <div class="sig-item">
+      <div class="sig-line"></div>
+      <div class="sig-label">ผู้อนุมัติ</div>
+      <div class="sig-sub">วันที่ ............./............./...........</div>
+    </div>
+  </div>
+</div>
+
+<div class="no-print" style="text-align:center;margin:20px;font-family:sans-serif">
+  <button onclick="window.print()" style="padding:10px 28px;background:#1d4ed8;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer;margin-right:8px">🖨️ พิมพ์ / บันทึก PDF</button>
+  <button onclick="window.close()" style="padding:10px 20px;background:#6b7280;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer">✕ ปิด</button>
+</div>
+
+</body>
+</html>`;
+
+  const win = window.open('','_blank','width=1100,height=800,scrollbars=yes');
+  win.document.write(html);
+  win.document.close();
+}
+
+// Init _analysisCache when project loads - cache is synced inside loadRiskProject directly
+
 </script>
 
 </body>
