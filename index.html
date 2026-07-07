@@ -6299,13 +6299,13 @@ function _buildEvalTable(evalRowsData) {
 
 function _buildSignatureBlock(proposer, proposerPos, approver, approverPos, authorizer, authorizerPos) {
   const block = (label, name, pos) => `
-    <div style="text-align:center;flex:1;padding:0 8px">
-      <div style="font-size:10.5px;margin-bottom:28px;font-weight:600">${label}</div>
-      <div style="border-bottom:1px solid #444;margin:0 16px 5px"></div>
+    <div style="text-align:center;flex:1;padding:0 6px;min-width:0">
+      <div style="font-size:10.5px;margin-bottom:56px;font-weight:600">${label}</div>
+      <div style="border-bottom:1px solid #444;margin:0 6px 5px"></div>
       <div style="font-size:10.5px">(${_esc(name||'') || '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'})</div>
       <div style="font-size:10px;color:#555;margin-top:3px">ตำแหน่ง ${_esc(pos||'') || '.................................'}</div>
     </div>`;
-  return `<div style="display:flex;margin-top:44px;gap:8px">
+  return `<div class="pdf-noBreak" style="display:flex;margin-top:50px;gap:4px">
     ${block('ผู้เสนอโครงการ', proposer, proposerPos)}
     ${block('ผู้เห็นชอบโครงการ', approver, approverPos)}
     ${block('ผู้อนุมัติโครงการ', authorizer, authorizerPos)}
@@ -6389,11 +6389,15 @@ function _buildFormHTML(p, logoSrc) {
     <div style="border:1px solid #ccc;padding:8px 10px;min-height:44px;font-size:10.5px">${_nl2br(_esc(p.objective||''))}</div>
   </div>
 
+  <div class="pdf-noBreak">
   ${_sectionHeader(3,'เป้าหมาย','#2c3e70')}
   <div style="font-size:10.5px;font-weight:600;margin:4px 0 2px;margin-left:8px">3.1 เชิงปริมาณ</div>
   <div style="border:1px solid #ccc;padding:8px 10px;min-height:36px;font-size:10.5px;margin-bottom:6px">${_nl2br(_esc(p.targetQuantity||''))}</div>
+  </div>
+  <div class="pdf-noBreak">
   <div style="font-size:10.5px;font-weight:600;margin:4px 0 2px;margin-left:8px">3.2 เชิงคุณภาพ</div>
   <div style="border:1px solid #ccc;padding:8px 10px;min-height:36px;font-size:10.5px">${_nl2br(_esc(p.target||''))}</div>
+  </div>
 
   ${_sectionHeader(4,'การดำเนินงาน (กิจกรรม / ขั้นตอน)','#2c3e70')}
   ${_buildActivitiesTable(p.activities)}
@@ -6408,8 +6412,10 @@ function _buildFormHTML(p, logoSrc) {
   ${_buildEvalTable(evalData)}
   ${p.risk?`<div style="font-size:10.5px;margin-top:6px"><strong>ความเสี่ยงและการจัดการ :</strong> ${_nl2br(_esc(p.risk))}</div>`:''}
 
+  <div class="pdf-noBreak">
   ${_sectionHeader(7,'ผลที่คาดว่าจะได้รับ','#2c3e70')}
   <div style="border:1px solid #ccc;padding:8px 10px;min-height:50px;font-size:10.5px">${_nl2br(_esc(p.expectedBenefit||''))}</div>
+  </div>
 
   ${_buildSignatureBlock(p.proposer,p.proposerPos,p.approver,p.approverPos,p.authorizer,p.authorizerPos)}
 
@@ -6471,6 +6477,20 @@ async function exportFormPDF(projectId) {
     if (cancelled) { clearTimeout(timeoutId); document.body.removeChild(container); return; }
 
     const root = container.querySelector('#pdf-form-root');
+
+    // ── เก็บตำแหน่ง "จุดตัดหน้าที่ปลอดภัย" จาก DOM ก่อน capture ──
+    // ป้องกันปัญหาตารางแถวถูกตัดครึ่ง/เนื้อหาตกขอบตอนขึ้นหน้าใหม่
+    // จุดปลอดภัย = ขอบล่างของ .pdf-noBreak (หัวข้อ/กล่องข้อความ/ลายเซ็น) และขอบล่างของทุกแถว <tr> ในตาราง
+    const _rootRectPre = root.getBoundingClientRect();
+    const _safeBreakEls = root.querySelectorAll('.pdf-noBreak, tr');
+    const _safeBreaksCss = new Set([0]);
+    _safeBreakEls.forEach(el => {
+      const r = el.getBoundingClientRect();
+      _safeBreaksCss.add(Math.round(r.bottom - _rootRectPre.top));
+    });
+    _safeBreaksCss.add(Math.round(root.scrollHeight));
+    const safeBreaksCss = Array.from(_safeBreaksCss).sort((a, b) => a - b);
+
     const canvas = await html2canvas(root, {
       scale: 2,
       useCORS: true,
@@ -6490,19 +6510,37 @@ async function exportFormPDF(projectId) {
     const usableW = pageW - marginX * 2;
     const usableH = pageH - marginY * 2;
     const imgW = usableW;
-    const imgH = (canvas.height * imgW) / canvas.width;
-    const pagesNeeded = Math.ceil(imgH / usableH);
 
-    for (let pg = 0; pg < pagesNeeded; pg++) {
+    // แปลงจุดตัดปลอดภัย (หน่วย css px ของ root) ให้เป็นหน่วย px ของ canvas จริง (คำนึงถึง scale ของ html2canvas)
+    const pxPerCssPx = canvas.width / _rootRectPre.width;
+    const safeBreaksPx = safeBreaksCss.map(v => v * pxPerCssPx).filter(v => v <= canvas.height);
+    if (safeBreaksPx[safeBreaksPx.length - 1] < canvas.height - 0.5) safeBreaksPx.push(canvas.height);
+
+    // ความสูงสูงสุดต่อหน้า (หน่วย px ของ canvas)
+    const pxPerMM = canvas.width / imgW;
+    const maxPageHeightPx = usableH * pxPerMM;
+
+    let currentY = 0;
+    let pg = 0;
+    while (currentY < canvas.height - 0.5) {
       if (pg > 0) pdf.addPage();
-      const srcY = pg * (usableH * canvas.height / imgH);
-      const srcH = Math.min(usableH * canvas.height / imgH, canvas.height - srcY);
+      const targetCut = currentY + maxPageHeightPx;
+      let cut = Math.min(targetCut, canvas.height);
+      // หาจุดตัดปลอดภัยที่ใกล้ที่สุด (มากที่สุดแต่ไม่เกิน targetCut) เพื่อไม่ให้ตัดกลางแถว/กลางกล่องข้อความ
+      for (let i = safeBreaksPx.length - 1; i >= 0; i--) {
+        const bp = safeBreaksPx[i];
+        if (bp > currentY + 1 && bp <= targetCut) { cut = bp; break; }
+      }
+      const srcY = currentY;
+      const srcH = Math.max(1, Math.min(cut - currentY, canvas.height - srcY));
       const pageCanvas = document.createElement('canvas');
       pageCanvas.width = canvas.width;
       pageCanvas.height = srcH;
       pageCanvas.getContext('2d').drawImage(canvas, 0, srcY, canvas.width, srcH, 0, 0, canvas.width, srcH);
       const renderedH = (srcH * imgW) / canvas.width;
       pdf.addImage(pageCanvas.toDataURL('image/jpeg', 0.92), 'JPEG', marginX, marginY, imgW, renderedH);
+      currentY = srcY + srcH;
+      pg++;
     }
 
     clearTimeout(timeoutId);
