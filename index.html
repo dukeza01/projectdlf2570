@@ -14,12 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #f5f7ff;
-background-image:
-  radial-gradient(circle at 0% 0%, #dce8ff88 0%, transparent 45%),
-  radial-gradient(circle at 100% 100%, #e8d5ff66 0%, transparent 40%),
-  radial-gradient(circle at 60% 20%, #d0f0ff44 0%, transparent 35%);
-background-attachment: fixed;
+  --bg: #eef1fb;
   --surface: #ffffff;
   --surface2: #f0f2f5;
   --border: #e4e7ed;
@@ -51,6 +46,17 @@ background-attachment: fixed;
   --radius-lg: 14px;
   --shadow: 0 1px 4px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
   --shadow-lg: 0 4px 20px rgba(0,0,0,.10);
+
+  /* ── Sidebar gradient theme (น้ำเงิน-ม่วง) ── */
+  --sidebar-grad: linear-gradient(160deg, #1e2359 0%, #33308f 45%, #6d28d9 100%);
+  --sidebar-border: rgba(255,255,255,.12);
+  --sidebar-text: #f2f0ff;
+  --sidebar-text-muted: #b9b4e8;
+  --sidebar-text-faint: #8d87c4;
+  --sidebar-hover-bg: rgba(255,255,255,.09);
+  --sidebar-active-bg: rgba(255,255,255,.16);
+  --sidebar-active-text: #ffffff;
+  --sidebar-active-accent: #a78bfa;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -59,6 +65,11 @@ body {
   font-family: 'Sarabun', sans-serif;
   font-size: 14px;
   background: var(--bg);
+  background-image:
+    radial-gradient(circle at 0% 0%, #dce3ff 0%, transparent 45%),
+    radial-gradient(circle at 100% 0%, #ecdcff 0%, transparent 40%),
+    radial-gradient(circle at 50% 100%, #dcefff 0%, transparent 45%);
+  background-attachment: fixed;
   color: var(--text);
   line-height: 1.65;
   min-height: 100vh;
@@ -71,13 +82,9 @@ body {
 .sidebar {
   width: 228px;
   flex-shrink: 0;
-background: #f5f7ff;
-background-image:
-  radial-gradient(circle at 0% 0%, #dce8ff88 0%, transparent 45%),
-  radial-gradient(circle at 100% 100%, #e8d5ff66 0%, transparent 70%),
-  radial-gradient(circle at 60% 20%, #d0f0ff44 0%, transparent 35%);
-background-attachment: fixed;
-  border-right: 1px solid var(--border);
+  background: var(--sidebar-grad);
+  border-right: 1px solid var(--sidebar-border);
+  box-shadow: 2px 0 16px rgba(30,20,90,.18);
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -87,20 +94,30 @@ background-attachment: fixed;
 
 .sidebar-logo {
   padding: 1.25rem 1rem 1rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--sidebar-border);
+  text-align: center;
 }
 
-.sidebar-logo .org { font-size: 10.5px; color: var(--text3); line-height: 1.5; margin-bottom: 4px; }
-.sidebar-logo .title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.sidebar-logo .org { font-size: 10.5px; color: var(--sidebar-text-muted); line-height: 1.5; margin-bottom: 4px; }
+.sidebar-logo .title { font-size: 13px; font-weight: 700; color: var(--sidebar-text); line-height: 1.3; }
 .sidebar-logo .badge-year {
   display: inline-block;
   margin-top: 7px;
-  background: linear-gradient(135deg, #3b72f0, #6b9ef8);
-  color: #fff;
+  background: linear-gradient(135deg, #fff 0%, #d9d3ff 100%);
+  color: #4c1d95;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 3px 10px;
   border-radius: 99px;
+}
+
+.sidebar-logo .org-logo {
+  background: #fff;
+  border-radius: 10px;
+  padding: 6px 8px;
+  display: inline-block;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
 }
 
 .sidebar-nav { padding: .5rem 0; flex: 1; overflow-y: auto; }
@@ -111,7 +128,7 @@ background-attachment: fixed;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--text3);
+  color: var(--sidebar-text-faint);
 }
 
 .nav-item {
@@ -121,7 +138,7 @@ background-attachment: fixed;
   padding: .5rem 1rem;
   font-size: 13px;
   font-family: 'Sarabun', sans-serif;
-  color: var(--text2);
+  color: var(--sidebar-text-muted);
   cursor: pointer;
   border: none;
   background: none;
@@ -131,20 +148,20 @@ background-attachment: fixed;
   transition: background .15s, color .15s;
 }
 
-.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item:hover { background: var(--sidebar-hover-bg); color: var(--sidebar-text); }
 .nav-item.active {
-  background: var(--accent-light);
-  color: var(--accent);
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active-text);
   font-weight: 600;
-  border-right: 3px solid var(--accent);
+  border-right: 3px solid var(--sidebar-active-accent);
 }
 .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
 
 .sidebar-footer {
   padding: .75rem 1rem;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--sidebar-border);
   font-size: 11px;
-  color: var(--text3);
+  color: var(--sidebar-text-faint);
 }
 
 /* ── Main ── */
@@ -1551,6 +1568,7 @@ body.is-guest .risk-dash-card { cursor:default; }
       <div class="org">มูลนิธิการศึกษาทางไกลผ่านดาวเทียม<br>ในพระบรมราชูปถัมภ์</div>
       <div class="title">ระบบรายงานผลการดำเนินงาน</div>
       <span class="badge-year badge-year-2570" id="sidebarYearBadge">ปีงบประมาณ พ.ศ. 2570</span>
+    </div>
     </div>
     <div class="sidebar-nav">
       <div class="nav-section">หน้าหลัก</div>
