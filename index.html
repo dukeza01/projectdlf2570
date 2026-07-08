@@ -2856,6 +2856,7 @@ body.is-guest .risk-dash-card { cursor:default; }
     <div class="modal-body" id="detailBody"></div>
     <div class="modal-footer">
       <button class="btn" onclick="closeDetail()">ปิด</button>
+      <button class="btn" id="detailExportPdfBtn" style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border-color:transparent">📄 Export PDF</button>
       <button class="btn btn-primary" id="detailEditBtn">✏️ แก้ไข</button>
     </div>
   </div>
@@ -4057,6 +4058,7 @@ function openDetail(id){
   const p=projects.find(x=>x.id==id); if(!p) return;
   document.getElementById('detailTitle').textContent=p.name;
   document.getElementById('detailEditBtn').onclick=()=>openEdit(id);
+  document.getElementById('detailExportPdfBtn').onclick=()=>exportFormPDF(id);
   const remaining=(p.budget||0)-(p.spent||0)-(p.po||0);
   const kpis=p.kpi||[];
   const evalData = Array.isArray(p.evalRows)&&p.evalRows.length ? p.evalRows
@@ -6543,6 +6545,15 @@ async function _runPdfExport(htmlContent, filenameBase) {
     _safeBreaksCss.add(Math.round(root.scrollHeight));
     const safeBreaksCss = Array.from(_safeBreaksCss).sort((a, b) => a - b);
 
+    // ── จุดที่ "ต้องขึ้นหน้าใหม่เสมอ" (เช่น ก่อนเริ่มยุทธศาสตร์ใหม่) — เก็บตำแหน่งขอบบนของ .pdf-pageBreakBefore ──
+    const _forceBreakEls = root.querySelectorAll('.pdf-pageBreakBefore');
+    const _forceBreaksCssSet = new Set();
+    _forceBreakEls.forEach(el => {
+      const r = el.getBoundingClientRect();
+      _forceBreaksCssSet.add(Math.round(r.top - _rootRectPre.top));
+    });
+    const forceBreaksCss = Array.from(_forceBreaksCssSet).sort((a, b) => a - b);
+
     const canvas = await html2canvas(root, {
       scale: 2,
       useCORS: true,
@@ -6567,6 +6578,7 @@ async function _runPdfExport(htmlContent, filenameBase) {
     const pxPerCssPx = canvas.width / _rootRectPre.width;
     const safeBreaksPx = safeBreaksCss.map(v => v * pxPerCssPx).filter(v => v <= canvas.height);
     if (safeBreaksPx[safeBreaksPx.length - 1] < canvas.height - 0.5) safeBreaksPx.push(canvas.height);
+    const forceBreaksPx = forceBreaksCss.map(v => v * pxPerCssPx).filter(v => v <= canvas.height);
 
     // ความสูงสูงสุดต่อหน้า (หน่วย px ของ canvas)
     const pxPerMM = canvas.width / imgW;
@@ -6599,6 +6611,12 @@ async function _runPdfExport(htmlContent, filenameBase) {
             if (chunk <= smallChunkThreshold) { cut = prevBp; idx--; } else break;
           }
         }
+      }
+      // ── บังคับขึ้นหน้าใหม่เสมอก่อนจุดที่ทำเครื่องหมายไว้ (เช่น ก่อนเริ่มยุทธศาสตร์ใหม่ในรายงานฉบับสมบูรณ์) ──
+      // ถ้ามีจุดบังคับขึ้นหน้าใหม่อยู่ในช่วงของหน้านี้ (และยังไม่ใช่จุดเริ่มต้นหน้าอยู่แล้ว) ให้ตัดจบหน้าไว้ก่อนจุดนั้นทันที
+      for (let i = 0; i < forceBreaksPx.length; i++) {
+        const fb = forceBreaksPx[i];
+        if (fb > currentY + 1 && fb < cut - 0.5) { cut = fb; break; }
       }
       if (cut <= currentY + 0.5) cut = Math.min(targetCut, canvas.height);
       const srcY = currentY;
@@ -6847,7 +6865,7 @@ function _buildFullFormsHTML(fp, logoSrc, includeTopHeader, quarter) {
     const ps = fp.filter(p => p.strategy == s);
     if (!ps.length) return;
     out += `
-<div style="font-family:'Sarabun',sans-serif;width:740px;max-width:740px;box-sizing:border-box;margin:0 auto;background:#fff;padding:10px 36px 0">
+<div class="pdf-pageBreakBefore" style="font-family:'Sarabun',sans-serif;width:740px;max-width:740px;box-sizing:border-box;margin:0 auto;background:#fff;padding:10px 36px 0">
   <div class="pdf-noBreak" style="background:${_OV_STRAT_COLORS[s]};color:#fff;font-weight:700;font-size:11.5px;padding:6px 12px;margin:14px 0 6px;border-radius:3px">ยุทธศาสตร์ที่ ${s} : ${_esc(_OV_STRAT_NAMES[s])} (${ps.length} โครงการ)</div>
 </div>`;
     out += ps.map(p => _buildFormHTML(p, logoSrc, {showHeader:false})).join('');
